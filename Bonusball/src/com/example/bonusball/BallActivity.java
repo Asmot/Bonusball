@@ -6,6 +6,7 @@ import java.util.TimerTask;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,6 +29,8 @@ import com.example.bonusball.hzk.ScreenCal;
 import com.example.bonusball.hzk.ScreenPoint;
 public class BallActivity extends Activity {  
   
+	private final static int BALL_NUM=100;//球的数量
+	
 	private GestureDetector gd;  //手势监听
 	
     private CanvasView myCanvas;  
@@ -36,11 +39,13 @@ public class BallActivity extends Activity {
   
     EditText inputEt=null;
     
-    private String str="郑翔";//显示的字
-    private int ballNum=100;//球的数量
+    private String str="一二三";//显示的字
     private int index=0;
     
     private Handler handler;
+    
+    //弹框
+    AlertDialog dialog;
     
     @Override  
     public void onCreate(Bundle savedInstanceState) {  
@@ -57,6 +62,7 @@ public class BallActivity extends Activity {
         
         setContentView(myCanvas); 
         
+        initDialog();
         
         handler=new Handler(){
 
@@ -64,38 +70,36 @@ public class BallActivity extends Activity {
 			public void handleMessage(Message msg) {
 				// TODO Auto-generated method stub
 				super.handleMessage(msg);
-//				if(msg.what==1)
-//				{
-//					myCanvas.random_update_ball_speed();
+				switch (msg.what) {
+				case -1://表示结束
 					
+					break;
 
-				/**
-				 * 让球随机移动2秒之后再写下一个字
-				 */
-				try {
-					Thread.sleep(2000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				default:
+					/**
+					 * 让球随机移动2秒之后再写下一个字
+					 */
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					startGame(str, msg.what);
+					break;
 				}
-				
-				startGame(str, msg.what);
-//				}
 			}
         	
         };
         
         
-        //初始化输入框
-        inputEt=new EditText(this);
-        inputEt.setHint("请输入");
-        
         gd=new GestureDetector(this,new OnDoubleClick());  
         
         /*
-         * 初始化个球
+         * 初始化指定个数的球
          */
-        for(int i=0;i<ballNum;i++)
+        for(int i=0;i<BALL_NUM;i++)
         	myCanvas.fireBall(); 
         
         
@@ -113,24 +117,53 @@ public class BallActivity extends Activity {
 				if(str.length()>1&&index!=(str.length()-1))//不止一个字
 				{
 					index++;
-					
-					
 					handler.sendEmptyMessage(index);
 				}
 				else
 				{
 					index=0;//记录g归0
 				}
-//				System.out.println("画完了 第"+index+"个 总共 "+str.length());
+				if(index == str.length()) {
+					handler.sendEmptyMessage(-1);
+				}
+				System.out.println("画完了 第"+index+"个 总共 "+str.length());
 				
 				
 			}
 		});
     }  
-    
-    
+    private void initDialog() {
+    	
+    	 //初始化输入框
+        inputEt=new EditText(this);
+        inputEt.setHint("请输入");
+    	
+    	dialog = new AlertDialog.Builder(this)
+		.setTitle("提示")
+		.setMessage("请输入想要显示的字，，，不要太多")
+		.setView(inputEt)
+		.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface di, int which) {
+				String tem=inputEt.getText().toString();
+				
+				//没有输入汉字时  提示一下
+				if(tem.length()<1)
+				{
+					Toast.makeText(BallActivity.this, "没有输入任何汉字！", Toast.LENGTH_SHORT).show();
+				}
+				else
+				{
+					str=tem;//修改本地存储的值
+					startGame(str,0);
+					index=0;
+				}
+			}
 
-    /**
+		}).show();
+		dialog.dismiss();
+	}
+
+	/**
      * 开始显示字
      * @param string 需要显示的字
      */
@@ -151,20 +184,14 @@ public class BallActivity extends Activity {
         		if(data[i][j]==1)
         		{
         			screenlist.get(i*length+j).setFalg(true);
-//        			System.out.print("■");
         		}
         		else
     			{
         			screenlist.get(i*length+j).setFalg(false);
-//        			System.out.print(" ");
     			}
 			}
-//        	System.out.print("\n");
         }
     	myCanvas.formChinese(screenlist);
-	    	
-	    
-		
 		
 	}
     
@@ -194,54 +221,41 @@ public class BallActivity extends Activity {
 		default:
 			break;
 		}
-    	
         return gd.onTouchEvent(event);   //处理双击 长安
     }  
-    
-  
-  
     class OnDoubleClick extends GestureDetector.SimpleOnGestureListener{  
     	
     
 		@Override
 		public boolean onSingleTapUp(MotionEvent event) {
-			// TODO Auto-generated method stub
-			
-	    	
-			//myCanvas.random_update_ball_speed();
-//			myCanvas.isMouseDown=true;
-//			Log.i("BallActivity", "onSingleTapUp");
 			return false;
 		}
 
 		@Override  
         public boolean onDoubleTap(MotionEvent e) {  //双击
-            //TODO  
-			myCanvas.random_update_ball_speed();
+			if(str.length()>0)
+			{
+				//如果字已经写到一半了 从头开始
+//				if(index != 0) {
+//					//直接从新开始写字即可
+//					//不用再次形成文字坐标
+//					myCanvas.reStart();
+//				} else {
+					startGame(str,0);//开始写字
+//				}
+				//从头开始 index 置0
+				index=0;
+				
+			}
 			Log.i("BallActivity", "onDoubleTap");
             return false;  
         }
 
 		@Override
-		public void onLongPress(MotionEvent event) {//长安
+		public void onLongPress(MotionEvent event) {//长按
 			// TODO Auto-generated method stub
 			super.onLongPress(event);
-//			startGame(str);
-			
-	    	if(str.length()>0)
-			{
-				startGame(str,0);//开始写字
-				index=0;
-//				handler.sendEmptyMessage(0);
-			}
-//			Toast.makeText(BallActivity.this, "长安", Toast.LENGTH_SHORT).show();
 		}  
-		
-		
-//        @Override  
-//        public boolean onDoubleTapEvent(MotionEvent e) {  
-//            return super.onDoubleTapEvent(e);  
-//        }  
     }  
     
 
@@ -272,30 +286,9 @@ public class BallActivity extends Activity {
 	}  
     
 	public void showInputDialog() {
-		new AlertDialog.Builder(this)
-				.setTitle("提示")
-				.setMessage("请输入想要显示的字，，，不要太多")
-				.setView(inputEt)
-				.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface di, int which) {
-						String tem=inputEt.getText().toString();
-						
-						//没有输入汉字时  提示一下
-						if(tem.length()<1)
-						{
-							Toast.makeText(BallActivity.this, "没有输入任何汉字！", Toast.LENGTH_SHORT).show();
-						}
-						else
-						{
-							str=tem;//修改本地存储的值
-							startGame(str,0);
-							index=0;
-//							handler.sendEmptyMessage(0);
-						}
-						
-					}
-
-				}).show();
+		if(dialog != null) {
+			dialog.show();
+		}
 	}
 	
 }  
