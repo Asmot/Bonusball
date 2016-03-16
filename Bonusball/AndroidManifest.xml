@@ -16,6 +16,9 @@
         <activity
             android:name="com.example.bonusball.BallActivity"
             android:label="@string/app_name" >
+        </activity>
+        <activity android:name=".opengl.BallOpenGLActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
