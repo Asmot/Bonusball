@@ -8,105 +8,105 @@ import android.content.res.AssetManager;
 
 
 public class HZKUtils {
-	/**µãÕóÖĞµÄÊı¾İ*/
+    /**ç‚¹é˜µä¸­çš„æ•°æ®*/
 //	public int[] unit=new int[32];
-	
-	public final static String YES="¡ö";
-	public final String NO=" ";
-	
-	
-	
-	/**
-	 * ¶ÁÈ¡Ò»¸ö×Ö·ûµÄunit
-	 * @param ch
-	 * @return
-	 */
-	private static int[] getUnit(Context context,char ch)
-	{
-		
-		int[] unit=new int[32];
-		
-		byte[] buf=new byte[32];
-		InputStream input=null;
-		
-		try{
-			String string=Character.toString(ch);
-		    byte[] bt = string.getBytes("GBK"); //»ñµÃ¹ú±êÂë
-		    int a1=negativeToPlus(bt[0]); //×ªÎªÎŞ·ûºÅÕûÊı
-		    int a2=negativeToPlus(bt[1]);
-		    int qh=a1-0xA0; //µÃµ½ÇøÎ»Âë
-		    int wh=a2-0xA0;
-		    long offset=(94*(qh-1)+(wh-1))*32;   //»ñµÃÆ«ÒÆÁ¿
-		        
-		    AssetManager am = null;  
-		    am = context.getAssets();  
+
+    public final static String YES="â– ";
+    public final String NO=" ";
+
+
+
+    /**
+     * è¯»å–ä¸€ä¸ªå­—ç¬¦çš„unit
+     * @param ch
+     * @return
+     */
+    private static int[] getUnit(Context context,char ch)
+    {
+
+        int[] unit=new int[32];
+
+        byte[] buf=new byte[32];
+        InputStream input=null;
+
+        try{
+            String string=Character.toString(ch);
+            byte[] bt = string.getBytes("GBK"); //è·å¾—å›½æ ‡ç 
+            int a1=negativeToPlus(bt[0]); //è½¬ä¸ºæ— ç¬¦å·æ•´æ•°
+            int a2=negativeToPlus(bt[1]);
+            int qh=a1-0xA0; //å¾—åˆ°åŒºä½ç 
+            int wh=a2-0xA0;
+            long offset=(94*(qh-1)+(wh-1))*32;   //è·å¾—åç§»é‡
+
+            AssetManager am = null;
+            am = context.getAssets();
 //		    InputStream is = am.open("HZK16");  
 //		    File file=new File("HZK16");
 //		    input=new FileInputStream(file);
-		    input=am.open("HZK16");
-		    input.skip(offset);
-		    input.read(buf,0,32);
-		    for(int i=0;i<32;i++)
-	          unit[i]=negativeToPlus(buf[i]);
-		    input.close();
-	    }catch(Exception e){
-		        
-	        System.out.println("ÎÄ¼şÒì³£");
-	        e.printStackTrace();
-	    }
-		  
-		return unit;
-	}
-	
-	/**
-	 * ½«Ò»¸öÖĞÎÄ×Ö·û×ª»¯³É
-	 * 16*16µÄµãÕó
-	 * @param ch Ò»¸öÖĞÎÄ
-	 * @return
-	 */
-	public static int[][] readChinese(Context context,char ch)
-	{
-		/**µãÕóÖĞµÄÊı¾İ*/
-		int[][] data=new int[16][16];
-		
-		int[] unit=getUnit(context,ch);
-		
-		
-		for(int j=0;j<16;j++)
-		{
-			int num=0;
-			for(int i=0;i<2;i++)
-			{
-				for(int k=0;k<8;k++)
-				{
-					if((unit[j*2+i]&(0x80>>k))>=1) //È¡bitÎ»Öµ
-					{
-//						System.out.print("¡ö");
-						data[j][num]=1;
-						num++;
-					}
-					else
-					{   
+            input=am.open("HZK16");
+            input.skip(offset);
+            input.read(buf,0,32);
+            for(int i=0;i<32;i++)
+                unit[i]=negativeToPlus(buf[i]);
+            input.close();
+        }catch(Exception e){
+
+            System.out.println("æ–‡ä»¶å¼‚å¸¸");
+            e.printStackTrace();
+        }
+
+        return unit;
+    }
+
+    /**
+     * å°†ä¸€ä¸ªä¸­æ–‡å­—ç¬¦è½¬åŒ–æˆ
+     * 16*16çš„ç‚¹é˜µ
+     * @param ch ä¸€ä¸ªä¸­æ–‡
+     * @return
+     */
+    public static int[][] readChinese(Context context,char ch)
+    {
+        /**ç‚¹é˜µä¸­çš„æ•°æ®*/
+        int[][] data=new int[16][16];
+
+        int[] unit=getUnit(context,ch);
+
+
+        for(int j=0;j<16;j++)
+        {
+            int num=0;
+            for(int i=0;i<2;i++)
+            {
+                for(int k=0;k<8;k++)
+                {
+                    if((unit[j*2+i]&(0x80>>k))>=1) //å–bitä½å€¼
+                    {
+//						System.out.print("â– ");
+                        data[j][num]=1;
+                        num++;
+                    }
+                    else
+                    {
 //						System.out.print(" ");
-						data[j][num]=0;
-						num++;
-					}
-				 }
-			}
-	                       
+                        data[j][num]=0;
+                        num++;
+                    }
+                }
+            }
+
 //	           System.out.println();
-           }
-		
-		return data;
-	}
-	
-	
-	/**
-	 * ×ªÎªÎŞ·ûºÅÕûÊı
-	 * @param b
-	 * @return
-	 */
-	private static int negativeToPlus(byte b){
-		  return b&0xFF;
-	}
+        }
+
+        return data;
+    }
+
+
+    /**
+     * è½¬ä¸ºæ— ç¬¦å·æ•´æ•°
+     * @param b
+     * @return
+     */
+    private static int negativeToPlus(byte b){
+        return b&0xFF;
+    }
 }

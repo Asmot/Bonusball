@@ -9,7 +9,7 @@ public class Ball {
     private float targetY=0;  
     private float velocityX;  
     private float velocityY;  
-    private float radius;  //°ë¾¶
+    private float radius;  //
     private int color;  
     
     public Ball(int rgb,float r,float pX,float pY,float vX,float vY)  

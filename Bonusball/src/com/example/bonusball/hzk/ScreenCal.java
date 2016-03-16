@@ -3,39 +3,39 @@ import java.util.ArrayList;
 
 
 public class ScreenCal {
-	
-	
-	
-	/**
-	 * ¸ù¾İÆÁÄ»´óĞ¡
-	 * ÔÚÆÁÄ»ÖĞ¼ä·ÅÒ»¸ö16*16µÄµãÕó
-	 * ¼´·µ»ØÕâ64¸öµãµÄ×ó±ß
-	 * @param width
-	 * @param height
-	 * @return ·µ»ØÒ»¸öÁĞ±í
-	 */
-	public static ArrayList<ScreenPoint> screenCal(int width,int height)
-	{
-		ArrayList<ScreenPoint> list=new ArrayList<ScreenPoint>();
-		
-		int l=width/17;//ÏòÏÂÈ¡Õû Ã¿¸öµãÖ®¼äµÄ¿í¶È
-		
-		int temp_x=(width-15*l)/2;//µÚÒ»¸öµãÀë×ó±ßµÄ¾àÀë
-		
-		int temp_y=(height-15*l)/2;//µÚÒ»¸öµãÀë¶¥²¿µÄ¾àÀë
-		
-		//½«ÕâÒ»Èºµã°´Ë³Ğò·Åµ½listÖĞ
-		for(int i=0;i<256;i++)
-		{
-			int x=temp_x+l*(i%16);
-			int y=temp_y+l*(i/16);
-					
-			ScreenPoint point=new ScreenPoint(x,y,false);
-			list.add(point);
-		}
-		
-		return list;
-	}
-	
-	
+
+
+
+    /**
+     * æ ¹æ®å±å¹•å¤§å°
+     * åœ¨å±å¹•ä¸­é—´æ”¾ä¸€ä¸ª16*16çš„ç‚¹é˜µ
+     * å³è¿”å›è¿™64ä¸ªç‚¹çš„å·¦è¾¹
+     * @param width
+     * @param height
+     * @return è¿”å›ä¸€ä¸ªåˆ—è¡¨
+     */
+    public static ArrayList<ScreenPoint> screenCal(int width,int height)
+    {
+        ArrayList<ScreenPoint> list=new ArrayList<ScreenPoint>();
+
+        int l=width/17;//å‘ä¸‹å–æ•´ æ¯ä¸ªç‚¹ä¹‹é—´çš„å®½åº¦
+
+        int temp_x=(width-15*l)/2;//ç¬¬ä¸€ä¸ªç‚¹ç¦»å·¦è¾¹çš„è·ç¦»
+
+        int temp_y=(height-15*l)/2;//ç¬¬ä¸€ä¸ªç‚¹ç¦»é¡¶éƒ¨çš„è·ç¦»
+
+        //å°†è¿™ä¸€ç¾¤ç‚¹æŒ‰é¡ºåºæ”¾åˆ°listä¸­
+        for(int i=0;i<256;i++)
+        {
+            int x=temp_x+l*(i%16);
+            int y=temp_y+l*(i/16);
+
+            ScreenPoint point=new ScreenPoint(x,y,false);
+            list.add(point);
+        }
+
+        return list;
+    }
+
+
 }

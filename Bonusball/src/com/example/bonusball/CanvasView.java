@@ -1,5 +1,5 @@
-package com.example.bonusball;  
-  
+package com.example.bonusball;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -18,319 +18,319 @@ import android.graphics.Paint;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-  
-public class CanvasView extends SurfaceView implements SurfaceHolder.Callback  
-{  
 
-	/**Ä¦²ÁÁ¦*/
-	private final static float FRICTION=0.96f;		// 
-	
-	private final static String TAG = "CanvasView";
-	
-	private ArrayList<ScreenPoint> screenlist=null;
-	//Íâ²¿¼àÌı »æÖÆÍê³ÉµÄ½Ó¿Ú
-	private OnCompleteListener myCompleteListener;
-	
-    private SurfaceHolder myHolder;  
+public class CanvasView extends SurfaceView implements SurfaceHolder.Callback
+{
+
+    /**æ‘©æ“¦åŠ›*/
+    private final static float FRICTION=0.96f;		//
+
+    private final static String TAG = "CanvasView";
+
+    private ArrayList<ScreenPoint> screenlist=null;
+    //å¤–éƒ¨ç›‘å¬ ç»˜åˆ¶å®Œæˆçš„æ¥å£
+    private OnCompleteListener myCompleteListener;
+
+    private SurfaceHolder myHolder;
     private Paint ballPaint; // Paint used to draw the cannonball  
     private int screenWidth; // width of the screen  
     private int screenHeight; // height of the screen  
-    private int maxBallRadius=10;  
+    private int maxBallRadius=10;
     private int maxBallSpeed=30;
-    private CanvasThread myThread;  
-    private List<BallForCH> ballList;//ËùÓĞĞ¡ÇòµÄ¼¯ºÏ
-    private Paint backgroundPaint;  
-    private Random mRandom;  
-    
-    //Ä¬ÈÏÃ¿5Ãë»­ÍêÒ»¸ö×Ö£¬ÓÃÒ»¸ötimerÀ´¼ÆÊı
+    private CanvasThread myThread;
+    private List<BallForCH> ballList;//æ‰€æœ‰å°çƒçš„é›†åˆ
+    private Paint backgroundPaint;
+    private Random mRandom;
+
+    //é»˜è®¤æ¯5ç§’ç”»å®Œä¸€ä¸ªå­—ï¼Œç”¨ä¸€ä¸ªtimeræ¥è®¡æ•°
     private Timer mTimer;
-    
-    //¿ØÖÆÑ­»·  
-    boolean isLoop;  
-    
-    int	mouseX, mouseY;// µ±Ç°Êó±ê×ø±ê
-    int	mouseVX, mouseVY;// Êó±êËÙ¶È
-    int	prevMouseX,	prevMouseY;// ÉÏ´ÎÊó±ê×ø±ê
-    boolean	isMouseDown=false;// Êó±ê×ó¼üÊÇ·ñ°´ÏÂ
-  
-    public CanvasView(Context context,int width,int height) {  
-        super(context);   
+
+    //æ§åˆ¶å¾ªç¯  
+    boolean isLoop;
+
+    int	mouseX, mouseY;// å½“å‰é¼ æ ‡åæ ‡
+    int	mouseVX, mouseVY;// é¼ æ ‡é€Ÿåº¦
+    int	prevMouseX,	prevMouseY;// ä¸Šæ¬¡é¼ æ ‡åæ ‡
+    boolean	isMouseDown=false;// é¼ æ ‡å·¦é”®æ˜¯å¦æŒ‰ä¸‹
+
+    public CanvasView(Context context,int width,int height) {
+        super(context);
         // TODO Auto-generated constructor stub  
         this.screenWidth=width;
         this.screenHeight=height;
-        
-        myHolder=this.getHolder();  
-        myHolder.addCallback(this);  
-        ballPaint=new Paint();  
-  
-        backgroundPaint = new Paint();  
-        backgroundPaint.setColor(Color.BLACK);  
-        isLoop = true;  
-        ballList=new CopyOnWriteArrayList<BallForCH>();  
-        mRandom=new Random();  
-        
-    	// ³õÊ¼»¯Êó±ê±äÁ¿
-    	mouseX = prevMouseX = width / 2;
-    	mouseY = prevMouseY = height / 2;
-        
-       
-    }  
-  
+
+        myHolder=this.getHolder();
+        myHolder.addCallback(this);
+        ballPaint=new Paint();
+
+        backgroundPaint = new Paint();
+        backgroundPaint.setColor(Color.BLACK);
+        isLoop = true;
+        ballList=new CopyOnWriteArrayList<BallForCH>();
+        mRandom=new Random();
+
+        // åˆå§‹åŒ–é¼ æ ‡å˜é‡
+        mouseX = prevMouseX = width / 2;
+        mouseY = prevMouseY = height / 2;
+
+
+    }
+
     public void fireBall()
     {
-    	//Ëæ»ú²úÉúÑÕÉ«
+        //éšæœºäº§ç”Ÿé¢œè‰²
         int ranColor = 0xff000000 | mRandom.nextInt(0x00ffffff);
-        
-        //Ëæ»ú²úÉú°ë¾¶
-        float randomRadius=mRandom.nextInt(maxBallRadius);  
-        float tmpRadius=maxBallRadius/5.0>randomRadius?maxBallRadius:randomRadius;  
-       
+
+        //éšæœºäº§ç”ŸåŠå¾„
+        float randomRadius=mRandom.nextInt(maxBallRadius);
+        float tmpRadius=maxBallRadius/5.0>randomRadius?maxBallRadius:randomRadius;
+
 //        tmpRadius=maxBallRadius;
-        
-        float pX=screenWidth * 0.5f; 
+
+        float pX=screenWidth * 0.5f;
         float pY=screenHeight * 0.5f;
         int i = ballList.size();
         float speedX=(float) Math.cos(i)*mRandom.nextInt(34);
         float speedY=(float) Math.sin(i)*mRandom.nextInt(34);
-        
-        ballList.add(new BallForCH(ranColor,tmpRadius,pX,pY,speedX,speedY));  
+
+        ballList.add(new BallForCH(ranColor,tmpRadius,pX,pY,speedX,speedY));
     }
-    
-    public void fireBall(float startX,float startY,float velocityX,float velocityY)  
-    {  
-    	//Ëæ»ú²úÉúÑÕÉ«
+
+    public void fireBall(float startX,float startY,float velocityX,float velocityY)
+    {
+        //éšæœºäº§ç”Ÿé¢œè‰²
         int ranColor = 0xff000000 | mRandom.nextInt(0x00ffffff);
-        
-        //Ëæ»ú²úÉú°ë¾¶
-        float randomRadius=mRandom.nextInt(maxBallRadius);  
-        float tmpRadius=maxBallRadius/5.0>randomRadius?maxBallRadius:randomRadius;  
-        
-        ballList.add(new BallForCH(ranColor,tmpRadius,startX,startY,velocityX,velocityY));  
+
+        //éšæœºäº§ç”ŸåŠå¾„
+        float randomRadius=mRandom.nextInt(maxBallRadius);
+        float tmpRadius=maxBallRadius/5.0>randomRadius?maxBallRadius:randomRadius;
+
+        ballList.add(new BallForCH(ranColor,tmpRadius,startX,startY,velocityX,velocityY));
 //        System.out.println("Fire");  
-    }  
-  
-    @Override  
-    public void surfaceChanged(SurfaceHolder holder, int format, int width,  
-            int height) {  
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width,
+                               int height) {
         // TODO Auto-generated method stub  
-  
-  
-    }  
-    @Override  
-    protected void onSizeChanged(int w, int h, int oldw, int oldh)  
-    {  
-        super.onSizeChanged(w, h, oldw, oldh);  
+
+
+    }
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh)
+    {
+        super.onSizeChanged(w, h, oldw, oldh);
         screenWidth = w; // store the width  
         screenHeight = h; // store the height  
-        maxBallRadius=w/10;  
-    }  
-  
-    @Override  
-    public void surfaceCreated(SurfaceHolder holder) {  
+        maxBallRadius=w/10;
+    }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
         // TODO Auto-generated method stub  
-        myThread = new CanvasThread();  
-        System.out.println("SurfaceCreated!");  
-        myThread.start();   
-  
-    }  
-  
-    @Override  
-    public void surfaceDestroyed(SurfaceHolder holder) {  
+        myThread = new CanvasThread();
+        System.out.println("SurfaceCreated!");
+        myThread.start();
+
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
         // TODO Auto-generated method stub  
-        // Í£Ö¹Ñ­»·  
-        isLoop = false;  
-    }  
-    
+        // åœæ­¢å¾ªç¯  
+        isLoop = false;
+    }
+
     /**
-     * ÔÚ»­°åÉÏ
-     * ¸Ä±äËùÓĞĞ¡ÇòµÄ×´Ì¬
+     * åœ¨ç”»æ¿ä¸Š
+     * æ”¹å˜æ‰€æœ‰å°çƒçš„çŠ¶æ€
      * @param canvas
      */
-    public void drawGameElements(Canvas canvas)  
-    {  
-  
-        canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), backgroundPaint);  
-        for(Ball b:ballList)  
-        {  
-            ballPaint.setColor(b.getColor());  
-            canvas.drawCircle(b.getX(),b.getY(),b.getRadius(),ballPaint);  
-        }  
-    }  
-    
-    
-    
-    /**
-     * ¸Ä±äËùÓĞÇòµÄÎ»ÖÃ
-     * ¸ù¾İÃ¿¸öÇòµ±Ç°µÄËÙ¶È
-     * Èç¹ûÅöµ½±ß½ç ·´µ¯
-     */
-    private void updatePositions() {  
-        // TODO Auto-generated method stub  
-     
-        //Èç¹û×ÖĞ´ÍêÁËÍ£Ö¹Ïß³Ì
-        //ÔÊĞíÓĞÁ½¸öÇò¡£¡£¡£³Ù³ÙÅÜ²»µ½Î»        
+    public void drawGameElements(Canvas canvas)
+    {
 
-		mouseVX    = mouseX - prevMouseX;
-		mouseVY    = mouseY - prevMouseY;
-		prevMouseX = mouseX;
-		prevMouseY = mouseY;
-		
-		float toDist   = screenHeight * 0.86f;
-		float stirDist = screenHeight * 0.125f;
-		float blowDist = screenHeight * 0.5f;
-        
-        for(BallForCH b:ballList)  
-        {  
-			float x  = b.getX();
-			float y  = b.getY();
-			float vX = b.getVX();
-			float vY = b.getVY();
-			
-			float dX = x - mouseX;
-			float dY = y - mouseY; 
-			if(b.isReadyToForm())//µ±Ç°Çò´¦ÓÚ¹¹½¨ºº×Ö×´Ì¬
-        	{
-				dX = x - b.getTargetX();
-				dY = y - b.getTargetY();
-				
-        	} 
-			
-			float d  = (float)Math.sqrt(dX * dX + dY * dY);
-			dX = d>0 ? dX / d : 0;
-			dY = d>0 ? dY / d : 0;
-			
-        	
-   			//Êó±ê°´ÏÂ¼àÌı µã»÷ÆÁÄ»¡£¡£¡£
-			if (isMouseDown && d < blowDist)
-			{
-				float blowAcc = (1 - (d / blowDist)) * 14;
-				vX += dX * blowAcc + 0.5f - mRandom.nextFloat()/Integer.MAX_VALUE;
-				vY += dY * blowAcc + 0.5f - mRandom.nextFloat()/Integer.MAX_VALUE;
-			}
-			//ĞŞ¸ÄËÙ¶È
-			//Àë´¥ÃşµãÔ½Ô¶ËÙ¶ÈÔ½Ğ¡
-			if (d < toDist)
-			{
-				float toAcc = (1 - (d / toDist)) * screenHeight * 0.0014f;
-				vX -= dX * toAcc;
-				vY -= dY * toAcc;			
-			}
-			
-			if (d < stirDist)
-			{
-				float mAcc = (1 - (d / stirDist)) * screenHeight * 0.00026f;
-				vX += mouseVX * mAcc;
-				vY += mouseVY * mAcc;			
-			}
-			
-			vX *= FRICTION;
-			vY *= FRICTION;
-			
-			float avgVX = (float)Math.abs(vX);
-			float avgVY = (float)Math.abs(vY);
-			float avgV  = (avgVX + avgVY) * 0.5f;
-			
-			if (avgVX < 0.1) vX *= mRandom.nextFloat()/Integer.MAX_VALUE * 3;//float(mRandom.nextInt()) / Integer.MAX_VALUE * 3;
-			if (avgVY < 0.1) vY *= mRandom.nextFloat()/Integer.MAX_VALUE * 3;
-			
-			float sc = avgV * 0.45f;
-			sc = Math.max(Math.min(sc, 3.5f), 0.4f);
-			
-			float nextX = x + vX;
-			float nextY = y + vY;
-			
-			if		(nextX > screenWidth)	{ nextX = screenWidth;	vX *= -1; }
-			else if (nextX < 0)		{ nextX = 0;		vX *= -1; }
-			if		(nextY > screenHeight){ nextY = screenHeight;	vY *= -1; }
-			else if (nextY < 0)		{ nextY = 0;		vY *= -1; }
-			
-			b.setVX(vX);
-			b.setVY(vY);
-			b.setPosX(nextX);
-			b.setPosY(nextY);
-        	
+        canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), backgroundPaint);
+        for(Ball b:ballList)
+        {
+            ballPaint.setColor(b.getColor());
+            canvas.drawCircle(b.getX(),b.getY(),b.getRadius(),ballPaint);
         }
-    }  
+    }
+
+
+
+    /**
+     * æ”¹å˜æ‰€æœ‰çƒçš„ä½ç½®
+     * æ ¹æ®æ¯ä¸ªçƒå½“å‰çš„é€Ÿåº¦
+     * å¦‚æœç¢°åˆ°è¾¹ç•Œ åå¼¹
+     */
+    private void updatePositions() {
+        // TODO Auto-generated method stub  
+
+        //å¦‚æœå­—å†™å®Œäº†åœæ­¢çº¿ç¨‹
+        //å…è®¸æœ‰ä¸¤ä¸ªçƒã€‚ã€‚ã€‚è¿Ÿè¿Ÿè·‘ä¸åˆ°ä½        
+
+        mouseVX    = mouseX - prevMouseX;
+        mouseVY    = mouseY - prevMouseY;
+        prevMouseX = mouseX;
+        prevMouseY = mouseY;
+
+        float toDist   = screenHeight * 0.86f;
+        float stirDist = screenHeight * 0.125f;
+        float blowDist = screenHeight * 0.5f;
+
+        for(BallForCH b:ballList)
+        {
+            float x  = b.getX();
+            float y  = b.getY();
+            float vX = b.getVX();
+            float vY = b.getVY();
+
+            float dX = x - mouseX;
+            float dY = y - mouseY;
+            if(b.isReadyToForm())//å½“å‰çƒå¤„äºæ„å»ºæ±‰å­—çŠ¶æ€
+            {
+                dX = x - b.getTargetX();
+                dY = y - b.getTargetY();
+
+            }
+
+            float d  = (float)Math.sqrt(dX * dX + dY * dY);
+            dX = d>0 ? dX / d : 0;
+            dY = d>0 ? dY / d : 0;
+
+
+            //é¼ æ ‡æŒ‰ä¸‹ç›‘å¬ ç‚¹å‡»å±å¹•ã€‚ã€‚ã€‚
+            if (isMouseDown && d < blowDist)
+            {
+                float blowAcc = (1 - (d / blowDist)) * 14;
+                vX += dX * blowAcc + 0.5f - mRandom.nextFloat()/Integer.MAX_VALUE;
+                vY += dY * blowAcc + 0.5f - mRandom.nextFloat()/Integer.MAX_VALUE;
+            }
+            //ä¿®æ”¹é€Ÿåº¦
+            //ç¦»è§¦æ‘¸ç‚¹è¶Šè¿œé€Ÿåº¦è¶Šå°
+            if (d < toDist)
+            {
+                float toAcc = (1 - (d / toDist)) * screenHeight * 0.0014f;
+                vX -= dX * toAcc;
+                vY -= dY * toAcc;
+            }
+
+            if (d < stirDist)
+            {
+                float mAcc = (1 - (d / stirDist)) * screenHeight * 0.00026f;
+                vX += mouseVX * mAcc;
+                vY += mouseVY * mAcc;
+            }
+
+            vX *= FRICTION;
+            vY *= FRICTION;
+
+            float avgVX = (float)Math.abs(vX);
+            float avgVY = (float)Math.abs(vY);
+            float avgV  = (avgVX + avgVY) * 0.5f;
+
+            if (avgVX < 0.1) vX *= mRandom.nextFloat()/Integer.MAX_VALUE * 3;//float(mRandom.nextInt()) / Integer.MAX_VALUE * 3;
+            if (avgVY < 0.1) vY *= mRandom.nextFloat()/Integer.MAX_VALUE * 3;
+
+            float sc = avgV * 0.45f;
+            sc = Math.max(Math.min(sc, 3.5f), 0.4f);
+
+            float nextX = x + vX;
+            float nextY = y + vY;
+
+            if		(nextX > screenWidth)	{ nextX = screenWidth;	vX *= -1; }
+            else if (nextX < 0)		{ nextX = 0;		vX *= -1; }
+            if		(nextY > screenHeight){ nextY = screenHeight;	vY *= -1; }
+            else if (nextY < 0)		{ nextY = 0;		vY *= -1; }
+
+            b.setVX(vX);
+            b.setVY(vY);
+            b.setPosX(nextX);
+            b.setPosY(nextY);
+
+        }
+    }
 
     public void startGame() {
-    	int index = 0;
-    	int size = screenlist.size();
-    
-    	//ĞŞ¸ÄÃ¿¸öĞ¡ÇòµÄtarget×ø±ê
-    	//×ø±êÖµÈ¡×Ôºº×Ö×ø±êÖµÁĞ±í
-		for(BallForCH b : ballList) {
-			ScreenPoint point = screenlist.get(index);
-    		
-    		b.setTargetX(point.getX());
-    		b.setTargetY(point.getY());
-    		b.setReadyToForm(true);
+        int index = 0;
+        int size = screenlist.size();
+
+        //ä¿®æ”¹æ¯ä¸ªå°çƒçš„targetåæ ‡
+        //åæ ‡å€¼å–è‡ªæ±‰å­—åæ ‡å€¼åˆ—è¡¨
+        for(BallForCH b : ballList) {
+            ScreenPoint point = screenlist.get(index);
+
+            b.setTargetX(point.getX());
+            b.setTargetY(point.getY());
+            b.setReadyToForm(true);
 //    		Log.i(TAG, " ready to stop " + b.getTargetX() + "," + b.getTargetY());
-    		
-    		index ++;
-    		index = index % size;
-		}
-		
-		//¿ªÆôÒ»¸ö¶¨Ê±ÈÎÎñ ¼¸Ãëºó ½áÊø»­×Ö 
-		stopFormChineseTimerTask(5000);
+
+            index ++;
+            index = index % size;
+        }
+
+        //å¼€å¯ä¸€ä¸ªå®šæ—¶ä»»åŠ¡ å‡ ç§’å ç»“æŸç”»å­—
+        stopFormChineseTimerTask(5000);
     }
-    
+
     /**
-     * »ñÈ¡ĞèÒªÌî³äµÄ×ø±êµã
+     * è·å–éœ€è¦å¡«å……çš„åæ ‡ç‚¹
      * @param list
      */
     public void formChinese(ArrayList<ScreenPoint> list)
     {
-    	screenlist=new ArrayList<ScreenPoint>();
-    	//È¡³öĞèÒªÌî³äµÄ×ø±êµã
-    	for(ScreenPoint point : list) {
-    		if(point.isFalg()) {
-    			screenlist.add(point);
-    		}
-    	}
-    	
-    	//Ò»ÇĞ×¼±¸¾ÍĞ÷ ÓÎÏ·¿ªÊ¼
-    	startGame();
+        screenlist=new ArrayList<ScreenPoint>();
+        //å–å‡ºéœ€è¦å¡«å……çš„åæ ‡ç‚¹
+        for(ScreenPoint point : list) {
+            if(point.isFalg()) {
+                screenlist.add(point);
+            }
+        }
+
+        //ä¸€åˆ‡å‡†å¤‡å°±ç»ª æ¸¸æˆå¼€å§‹
+        startGame();
     }
-    
+
     private void stopFormChineseTimerTask(long when) {
-    	/*¶Ôtimer½øĞĞ´¦Àí
-    	 * Ò»ÃæÉÏÒ»´Î»­×Ö»¹Ã»ÓĞ»­Íê
-    	 * ÓÖ±»ÒªÇóÖØ¿ª£¬¶à¸ötimer»ìÔÚÒ»Æğ¾ÍÂÒÁË¡£¡£¡£
+    	/*å¯¹timerè¿›è¡Œå¤„ç†
+    	 * ä¸€é¢ä¸Šä¸€æ¬¡ç”»å­—è¿˜æ²¡æœ‰ç”»å®Œ
+    	 * åˆè¢«è¦æ±‚é‡å¼€ï¼Œå¤šä¸ªtimeræ··åœ¨ä¸€èµ·å°±ä¹±äº†ã€‚ã€‚ã€‚
     	 */
-    	if(mTimer != null) {
-    		mTimer.cancel();
-    		mTimer = null;
-    	}
-    	//ÖØĞÂ´´½¨Ò»¸öĞÂµÄtimer
-    	mTimer = new Timer();
-		mTimer.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				formChineseComplete();
-			}
-		}, when);
-    	
-    	
+        if(mTimer != null) {
+            mTimer.cancel();
+            mTimer = null;
+        }
+        //é‡æ–°åˆ›å»ºä¸€ä¸ªæ–°çš„timer
+        mTimer = new Timer();
+        mTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                formChineseComplete();
+            }
+        }, when);
+
+
     }
-    
+
     private void formChineseComplete(){
-    	if(myCompleteListener != null) {
-			myCompleteListener.onComplete();
-		}
-    	for(BallForCH b:ballList)  
-        {  
+        if(myCompleteListener != null) {
+            myCompleteListener.onComplete();
+        }
+        for(BallForCH b:ballList)
+        {
             b.setReadyToForm(false);//
         }
     }
 //    
 //    /**
-//     * Ëæ»ú¸Ä±ä ÇòµÄ×ø±ê
-//     * Æğµ½´òÂÒÇòµÄ×÷ÓÃ
-//     * ²¢½«ÇòÉèÎªfree×´Ì¬
+//     * éšæœºæ”¹å˜ çƒçš„åæ ‡
+//     * èµ·åˆ°æ‰“ä¹±çƒçš„ä½œç”¨
+//     * å¹¶å°†çƒè®¾ä¸ºfreeçŠ¶æ€
 //     */
 //    public void random_update_ball_speed()
 //    {
-//    	screenlist=null;//Çå¿Õ×Ö
+//    	screenlist=null;//æ¸…ç©ºå­—
 //    	
 //        for(BallForCH b:ballList)  
 //        {  
@@ -343,62 +343,62 @@ public class CanvasView extends SurfaceView implements SurfaceHolder.Callback
 //        	b.setVY(speedY);
 //        }
 //    }
-    
+
 
     public synchronized void clear()
     {
-		isLoop=false;
-    	ballList.clear();
+        isLoop=false;
+        ballList.clear();
     }
-  
-    private class CanvasThread extends Thread  
-    {  
-        @Override  
-        public void run()  
-        {  
-            Canvas canvas=null;  
-            while(isLoop)  
-            { 
-                try{  
-                    canvas = myHolder.lockCanvas(null);//»ñÈ¡»­²¼  
-                    synchronized( myHolder )  
-                    {  
-                        updatePositions(); 
+
+    private class CanvasThread extends Thread
+    {
+        @Override
+        public void run()
+        {
+            Canvas canvas=null;
+            while(isLoop)
+            {
+                try{
+                    canvas = myHolder.lockCanvas(null);//è·å–ç”»å¸ƒ  
+                    synchronized( myHolder )
+                    {
+                        updatePositions();
                         if(canvas!=null)
-                        	drawGameElements(canvas);  
+                            drawGameElements(canvas);
                         try {
-            				Thread.sleep(5);
-            			} catch (Exception e) {
-            				// TODO: handle exception
-            			}
-                    }  
-                }  
-                finally  
-                {  
-                    if (canvas != null)   
-                        myHolder.unlockCanvasAndPost(canvas);//½âËø»­²¼£¬Ìá½»»­ºÃµÄÍ¼Ïñ  
+                            Thread.sleep(5);
+                        } catch (Exception e) {
+                            // TODO: handle exception
+                        }
+                    }
+                }
+                finally
+                {
+                    if (canvas != null)
+                        myHolder.unlockCanvasAndPost(canvas);//è§£é”ç”»å¸ƒï¼Œæäº¤ç”»å¥½çš„å›¾åƒ  
                 } // end finally  
-            }  
-        }  
-    }  
-    
+            }
+        }
+    }
+
     /**
-	 * ¹ì¼£Çò»­Íê³ÉÊÂ¼ş
-	 */
-	public interface OnCompleteListener {
-		/**
-		 * »­ÍêÁË
-		 */
-		public void onComplete();
-	}
-	
-	/**
-	 * Íâ²¿¼àÌıÊ¹ÓÃ
-	 * @param myCompleteListener
-	 */
-	public void setOnCompleteListener(OnCompleteListener myCompleteListener) {
-		this.myCompleteListener = myCompleteListener;
-	}
-    
-    
+     * è½¨è¿¹çƒç”»å®Œæˆäº‹ä»¶
+     */
+    public interface OnCompleteListener {
+        /**
+         * ç”»å®Œäº†
+         */
+        public void onComplete();
+    }
+
+    /**
+     * å¤–éƒ¨ç›‘å¬ä½¿ç”¨
+     * @param myCompleteListener
+     */
+    public void setOnCompleteListener(OnCompleteListener myCompleteListener) {
+        this.myCompleteListener = myCompleteListener;
+    }
+
+
 }  

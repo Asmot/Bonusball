@@ -1,5 +1,5 @@
-package com.example.bonusball;  
-  
+package com.example.bonusball;
+
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -27,268 +27,268 @@ import com.example.bonusball.CanvasView.OnCompleteListener;
 import com.example.bonusball.hzk.HZKUtils;
 import com.example.bonusball.hzk.ScreenCal;
 import com.example.bonusball.hzk.ScreenPoint;
-public class BallActivity extends Activity {  
-  
-	private final static int BALL_NUM=100;//ÇòµÄÊıÁ¿
-	
-	private GestureDetector gd;  //ÊÖÊÆ¼àÌı
-	
-    private CanvasView myCanvas;  
-    //ÔÚÆÁÄ»ÉÏ»­Ò»¸ö16*16µÄµãÕó ¼ÇÂ¼ËùÓĞµÄ×ø±ê
+public class BallActivity extends Activity {
+
+    private final static int BALL_NUM=100;//çƒçš„æ•°é‡
+
+    private GestureDetector gd;  //æ‰‹åŠ¿ç›‘å¬
+
+    private CanvasView myCanvas;
+    //åœ¨å±å¹•ä¸Šç”»ä¸€ä¸ª16*16çš„ç‚¹é˜µ è®°å½•æ‰€æœ‰çš„åæ ‡
     private ArrayList<ScreenPoint> screenlist;
-  
+
     EditText inputEt=null;
-    
-    private String str="Ò»¶şÈı";//ÏÔÊ¾µÄ×Ö
+
+    private String str="ä¸€äºŒä¸‰";//æ˜¾ç¤ºçš„å­—
     private int index=0;
-    
+
     private Handler handler;
-    
-    //µ¯¿ò
+
+    //å¼¹æ¡†
     AlertDialog dialog;
-    
-    @Override  
-    public void onCreate(Bundle savedInstanceState) {  
-        super.onCreate(savedInstanceState);  
-        
-        requestWindowFeature(Window.FEATURE_NO_TITLE);    
-        
-        // »ñÈ¡ÆÁÄ»¿í¸ß
-     	Display display = getWindowManager().getDefaultDisplay();
-     	
-     	screenlist=ScreenCal.screenCal(display.getWidth(), display.getHeight());
-     	
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        // è·å–å±å¹•å®½é«˜
+        Display display = getWindowManager().getDefaultDisplay();
+
+        screenlist=ScreenCal.screenCal(display.getWidth(), display.getHeight());
+
         myCanvas=new CanvasView(this,display.getWidth(),display.getHeight());
-        
-        setContentView(myCanvas); 
-        
+
+        setContentView(myCanvas);
+
         initDialog();
-        
+
         handler=new Handler(){
 
-			@Override
-			public void handleMessage(Message msg) {
-				// TODO Auto-generated method stub
-				super.handleMessage(msg);
-				switch (msg.what) {
-				case -1://±íÊ¾½áÊø
-					
-					break;
+            @Override
+            public void handleMessage(Message msg) {
+                // TODO Auto-generated method stub
+                super.handleMessage(msg);
+                switch (msg.what) {
+                    case -1://è¡¨ç¤ºç»“æŸ
 
-				default:
-					/**
-					 * ÈÃÇòËæ»úÒÆ¶¯2ÃëÖ®ºóÔÙĞ´ÏÂÒ»¸ö×Ö
-					 */
-					try {
-						Thread.sleep(2000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-					startGame(str, msg.what);
-					break;
-				}
-			}
-        	
+                        break;
+
+                    default:
+                        /**
+                         * è®©çƒéšæœºç§»åŠ¨2ç§’ä¹‹åå†å†™ä¸‹ä¸€ä¸ªå­—
+                         */
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+
+                        startGame(str, msg.what);
+                        break;
+                }
+            }
+
         };
-        
-        
+
+
         gd=new GestureDetector(this,new OnDoubleClick());  
         
         /*
-         * ³õÊ¼»¯Ö¸¶¨¸öÊıµÄÇò
+         * åˆå§‹åŒ–æŒ‡å®šä¸ªæ•°çš„çƒ
          */
         for(int i=0;i<BALL_NUM;i++)
-        	myCanvas.fireBall(); 
-        
-        
-        //×ÖÔÚ»æÖÆÍêÊ±»áµ÷ÓÃ
+            myCanvas.fireBall();
+
+
+        //å­—åœ¨ç»˜åˆ¶å®Œæ—¶ä¼šè°ƒç”¨
         myCanvas.setOnCompleteListener(new OnCompleteListener() {
-			
-			@Override
-			public void onComplete() {
-				// TODO Auto-generated method stub
-				/**
-				 * »­ÍêÁË×Ö
-				 * ¿ªÊ¼»­ÏÂÒ»¸ö
-				 * index»­ÁËµÚ¼¸¸ö
-				 */
-				if(str.length()>1&&index!=(str.length()-1))//²»Ö¹Ò»¸ö×Ö
-				{
-					index++;
-					handler.sendEmptyMessage(index);
-				}
-				else
-				{
-					index=0;//¼ÇÂ¼g¹é0
-				}
-				if(index == str.length()) {
-					handler.sendEmptyMessage(-1);
-				}
-				System.out.println("»­ÍêÁË µÚ"+index+"¸ö ×Ü¹² "+str.length());
-				
-				
-			}
-		});
-    }  
+
+            @Override
+            public void onComplete() {
+                // TODO Auto-generated method stub
+                /**
+                 * ç”»å®Œäº†å­—
+                 * å¼€å§‹ç”»ä¸‹ä¸€ä¸ª
+                 * indexç”»äº†ç¬¬å‡ ä¸ª
+                 */
+                if(str.length()>1&&index!=(str.length()-1))//ä¸æ­¢ä¸€ä¸ªå­—
+                {
+                    index++;
+                    handler.sendEmptyMessage(index);
+                }
+                else
+                {
+                    index=0;//è®°å½•gå½’0
+                }
+                if(index == str.length()) {
+                    handler.sendEmptyMessage(-1);
+                }
+                System.out.println("ç”»å®Œäº† ç¬¬"+index+"ä¸ª æ€»å…± "+str.length());
+
+
+            }
+        });
+    }
     private void initDialog() {
-    	
-    	 //³õÊ¼»¯ÊäÈë¿ò
+
+        //åˆå§‹åŒ–è¾“å…¥æ¡†
         inputEt=new EditText(this);
-        inputEt.setHint("ÇëÊäÈë");
-    	
-    	dialog = new AlertDialog.Builder(this)
-		.setTitle("ÌáÊ¾")
-		.setMessage("ÇëÊäÈëÏëÒªÏÔÊ¾µÄ×Ö£¬£¬£¬²»ÒªÌ«¶à")
-		.setView(inputEt)
-		.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface di, int which) {
-				String tem=inputEt.getText().toString();
-				
-				//Ã»ÓĞÊäÈëºº×ÖÊ±  ÌáÊ¾Ò»ÏÂ
-				if(tem.length()<1)
-				{
-					Toast.makeText(BallActivity.this, "Ã»ÓĞÊäÈëÈÎºÎºº×Ö£¡", Toast.LENGTH_SHORT).show();
-				}
-				else
-				{
-					str=tem;//ĞŞ¸Ä±¾µØ´æ´¢µÄÖµ
-					startGame(str,0);
-					index=0;
-				}
-			}
+        inputEt.setHint("è¯·è¾“å…¥");
 
-		}).show();
-		dialog.dismiss();
-	}
+        dialog = new AlertDialog.Builder(this)
+                .setTitle("æç¤º")
+                .setMessage("è¯·è¾“å…¥æƒ³è¦æ˜¾ç¤ºçš„å­—ï¼Œï¼Œï¼Œä¸è¦å¤ªå¤š")
+                .setView(inputEt)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface di, int which) {
+                        String tem=inputEt.getText().toString();
 
-	/**
-     * ¿ªÊ¼ÏÔÊ¾×Ö
-     * @param string ĞèÒªÏÔÊ¾µÄ×Ö
+                        //æ²¡æœ‰è¾“å…¥æ±‰å­—æ—¶  æç¤ºä¸€ä¸‹
+                        if(tem.length()<1)
+                        {
+                            Toast.makeText(BallActivity.this, "æ²¡æœ‰è¾“å…¥ä»»ä½•æ±‰å­—ï¼", Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                        {
+                            str=tem;//ä¿®æ”¹æœ¬åœ°å­˜å‚¨çš„å€¼
+                            startGame(str,0);
+                            index=0;
+                        }
+                    }
+
+                }).show();
+        dialog.dismiss();
+    }
+
+    /**
+     * å¼€å§‹æ˜¾ç¤ºå­—
+     * @param str éœ€è¦æ˜¾ç¤ºçš„å­—
      */
-	protected void startGame(String str,int position) {
-		// TODO Auto-generated method stub
-//		System.out.println("ÕıÔÚ»­µÚ"+index+"¸ö ×Ü¹² "+str.length());
-		//¸ù¾İºº×ÖµÃµ½¶ÔÓ¦µÄµãÕó
-    	int[][] data=HZKUtils.readChinese(this,str.charAt(position));
-    	
-    	//½áºÏdataĞŞ¸Ä screenlistÖĞµÄµãµÄflag
-    	for(int i=0,length=data.length;i<length;i++)
-        {
-        	for (int j = 0; j < length; j++) {
-        		//ÉèÖÃÄ¬ÈÏÖµ
-        		screenlist.get(i*length+j).setFalg(false);
-        		//¸ÃµãÎª1 µãµÄ×´Ì¬ÉèÎªtrue
-        		//±íÊ¾ĞèÒª½«µãÒÆ¶¯µ½¶ÔÓ¦µÄµØ·½
-        		if(data[i][j]==1)
-        		{
-        			screenlist.get(i*length+j).setFalg(true);
-        		}
-        		else
-    			{
-        			screenlist.get(i*length+j).setFalg(false);
-    			}
-			}
-        }
-    	myCanvas.formChinese(screenlist);
-		
-	}
-    
-    @Override  
-    public boolean onTouchEvent(MotionEvent event)  
-    {  
-    	
-    	switch (event.getAction()) {
-		case MotionEvent.ACTION_DOWN:
-			myCanvas.isMouseDown=true;
-			Log.i("BallActivity", "MotionEvent.ACTION_DOWN");
-			break;
-		case MotionEvent.ACTION_MOVE:
-			
-			myCanvas.isMouseDown=false;
-			
-			float x=event.getX();
-	    	float y=event.getY();
-	    	
-			myCanvas.mouseX=(int)x;
-	    	myCanvas.mouseY=(int)y;
-	    	break;
-		case MotionEvent.ACTION_UP:
-			myCanvas.isMouseDown=false;
-			Log.i("BallActivity", "MotionEvent.ACTION_UP");
-			break;
-		default:
-			break;
-		}
-        return gd.onTouchEvent(event);   //´¦ÀíË«»÷ ³¤°²
-    }  
-    class OnDoubleClick extends GestureDetector.SimpleOnGestureListener{  
-    	
-    
-		@Override
-		public boolean onSingleTapUp(MotionEvent event) {
-			return false;
-		}
+    protected void startGame(String str,int position) {
+        // TODO Auto-generated method stub
+//		System.out.println("æ­£åœ¨ç”»ç¬¬"+index+"ä¸ª æ€»å…± "+str.length());
+        //æ ¹æ®æ±‰å­—å¾—åˆ°å¯¹åº”çš„ç‚¹é˜µ
+        int[][] data=HZKUtils.readChinese(this,str.charAt(position));
 
-		@Override  
-        public boolean onDoubleTap(MotionEvent e) {  //Ë«»÷
-			if(str.length()>0)
-			{
-				//Èç¹û×ÖÒÑ¾­Ğ´µ½Ò»°ëÁË ´ÓÍ·¿ªÊ¼
+        //ç»“åˆdataä¿®æ”¹ screenlistä¸­çš„ç‚¹çš„flag
+        for(int i=0,length=data.length;i<length;i++)
+        {
+            for (int j = 0; j < length; j++) {
+                //è®¾ç½®é»˜è®¤å€¼
+                screenlist.get(i*length+j).setFalg(false);
+                //è¯¥ç‚¹ä¸º1 ç‚¹çš„çŠ¶æ€è®¾ä¸ºtrue
+                //è¡¨ç¤ºéœ€è¦å°†ç‚¹ç§»åŠ¨åˆ°å¯¹åº”çš„åœ°æ–¹
+                if(data[i][j]==1)
+                {
+                    screenlist.get(i*length+j).setFalg(true);
+                }
+                else
+                {
+                    screenlist.get(i*length+j).setFalg(false);
+                }
+            }
+        }
+        myCanvas.formChinese(screenlist);
+
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event)
+    {
+
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                myCanvas.isMouseDown=true;
+                Log.i("BallActivity", "MotionEvent.ACTION_DOWN");
+                break;
+            case MotionEvent.ACTION_MOVE:
+
+                myCanvas.isMouseDown=false;
+
+                float x=event.getX();
+                float y=event.getY();
+
+                myCanvas.mouseX=(int)x;
+                myCanvas.mouseY=(int)y;
+                break;
+            case MotionEvent.ACTION_UP:
+                myCanvas.isMouseDown=false;
+                Log.i("BallActivity", "MotionEvent.ACTION_UP");
+                break;
+            default:
+                break;
+        }
+        return gd.onTouchEvent(event);   //å¤„ç†åŒå‡» é•¿å®‰
+    }
+    class OnDoubleClick extends GestureDetector.SimpleOnGestureListener{
+
+
+        @Override
+        public boolean onSingleTapUp(MotionEvent event) {
+            return false;
+        }
+
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {  //åŒå‡»
+            if(str.length()>0)
+            {
+                //å¦‚æœå­—å·²ç»å†™åˆ°ä¸€åŠäº† ä»å¤´å¼€å§‹
 //				if(index != 0) {
-//					//Ö±½Ó´ÓĞÂ¿ªÊ¼Ğ´×Ö¼´¿É
-//					//²»ÓÃÔÙ´ÎĞÎ³ÉÎÄ×Ö×ø±ê
+//					//ç›´æ¥ä»æ–°å¼€å§‹å†™å­—å³å¯
+//					//ä¸ç”¨å†æ¬¡å½¢æˆæ–‡å­—åæ ‡
 //					myCanvas.reStart();
 //				} else {
-					startGame(str,0);//¿ªÊ¼Ğ´×Ö
+                startGame(str,0);//å¼€å§‹å†™å­—
 //				}
-				//´ÓÍ·¿ªÊ¼ index ÖÃ0
-				index=0;
-				
-			}
-			Log.i("BallActivity", "onDoubleTap");
-            return false;  
+                //ä»å¤´å¼€å§‹ index ç½®0
+                index=0;
+
+            }
+            Log.i("BallActivity", "onDoubleTap");
+            return false;
         }
 
-		@Override
-		public void onLongPress(MotionEvent event) {//³¤°´
-			// TODO Auto-generated method stub
-			super.onLongPress(event);
-		}  
-    }  
-    
-
-
-
-	@Override
-	protected void onDestroy() {
-		// TODO Auto-generated method stub
-		super.onDestroy();
-		
-		myCanvas.clear();
-		Log.i("BallActivity", "onDestroy");
-	}  
-    
-    
-    
-    @Override  
-    public boolean onCreateOptionsMenu(Menu menu) {  
-        getMenuInflater().inflate(R.menu.main, menu);  
-        
-        return true;  
+        @Override
+        public void onLongPress(MotionEvent event) {//é•¿æŒ‰
+            // TODO Auto-generated method stub
+            super.onLongPress(event);
+        }
     }
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// TODO Auto-generated method stub
-		showInputDialog();//µ¯³öÊäÈëÌáÊ¾
-		return super.onOptionsItemSelected(item);
-	}  
-    
-	public void showInputDialog() {
-		if(dialog != null) {
-			dialog.show();
-		}
-	}
-	
-}  
+
+
+
+
+    @Override
+    protected void onDestroy() {
+        // TODO Auto-generated method stub
+        super.onDestroy();
+
+        myCanvas.clear();
+        Log.i("BallActivity", "onDestroy");
+    }
+
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // TODO Auto-generated method stub
+        showInputDialog();//å¼¹å‡ºè¾“å…¥æç¤º
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void showInputDialog() {
+        if(dialog != null) {
+            dialog.show();
+        }
+    }
+
+}
