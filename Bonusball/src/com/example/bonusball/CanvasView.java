@@ -35,7 +35,7 @@ public class CanvasView extends SurfaceView implements SurfaceHolder.Callback
     private Paint ballPaint; // Paint used to draw the cannonball  
     private int screenWidth; // width of the screen  
     private int screenHeight; // height of the screen  
-    private int maxBallRadius=10;
+    private int maxBallRadius=20;
     private int maxBallSpeed=30;
     private CanvasThread myThread;
     private List<BallForCH> ballList;//所有小球的集合

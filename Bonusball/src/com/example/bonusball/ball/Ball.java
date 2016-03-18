@@ -20,8 +20,11 @@ public class Ball {
         this.posY=pY;  
         this.velocityX=vX;  
         this.velocityY=vY;  
-    }  
-    
+    }
+
+    public Ball() {
+    }
+
     public float getRadius()  
     {  
         return radius;  

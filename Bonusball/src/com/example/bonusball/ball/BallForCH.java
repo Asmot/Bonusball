@@ -8,8 +8,11 @@ public class BallForCH extends Ball {
 		super(rgb, r, pX, pY, vX, vY);
 	}
 
-	
-	public boolean isReadyToForm() {
+    public BallForCH() {
+    }
+
+
+    public boolean isReadyToForm() {
 		return readyToForm;
 	}
 
