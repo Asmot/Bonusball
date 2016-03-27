@@ -461,9 +461,11 @@ window.onload = main;
 		var text =  document.getElementById("myInput").value;
 		var c=document.getElementById("myCanvas");
 		var ctx=c.getContext("2d");
+		ctx.clearRect(0, 0, c.width,c.height);
+		
 		ctx.fillStyle = '#000';
 		ctx.textBaseline = 'top';
-		ctx.clearRect(0, 0, c.width,c.height);
+		ctx.font = "Courier New";
 		ctx.fillText(text, 0, 0);
 
 		var imgData=ctx.getImageData(0,0,c.width,c.height);
