@@ -1,4 +1,4 @@
-package com.example.bonusball.opengl;
+package com.example.bonusball.opengl2;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;

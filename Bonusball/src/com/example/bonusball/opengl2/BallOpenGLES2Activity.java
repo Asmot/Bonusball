@@ -1,4 +1,4 @@
-package com.example.bonusball.opengl;
+package com.example.bonusball.opengl2;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -25,7 +25,7 @@ import com.example.bonusball.hzk.ScreenPoint;
 
 import java.util.ArrayList;
 
-public class BallOpenGLActivity extends Activity implements View.OnClickListener {
+public class BallOpenGLES2Activity extends Activity implements View.OnClickListener {
 
     private final static int BALL_NUM=100;//球的数量
 
@@ -43,7 +43,7 @@ public class BallOpenGLActivity extends Activity implements View.OnClickListener
     private Handler handler;
 
     private GLSurfaceView mGLView;
-    private MyGLRenderer mRenderer;
+    private MyGLES2Renderer mRenderer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,7 +57,8 @@ public class BallOpenGLActivity extends Activity implements View.OnClickListener
         screenlist=ScreenCal.screenCal(display.getWidth(), display.getHeight());
 
         mGLView = new GLSurfaceView(this);
-//        mGLView.setEGLContextClientVersion(2);
+        //使用opengles2.0
+        mGLView.setEGLContextClientVersion(2);
 
         setContentView(mGLView);
 
@@ -70,11 +71,12 @@ public class BallOpenGLActivity extends Activity implements View.OnClickListener
         initDialog();
 
 
-        mRenderer = new MyGLRenderer();
+        mRenderer = new MyGLES2Renderer();
 
         mGLView.setRenderer(mRenderer);
 
         mGLView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+
 
 
         gd=new GestureDetector(this,new OnDoubleClick());
@@ -92,9 +94,7 @@ public class BallOpenGLActivity extends Activity implements View.OnClickListener
                         break;
 
                     default:
-                        /**
-                         * 让球随机移动2秒之后再写下一个字
-                         */
+                        // 让球随机移动2秒之后再写下一个字
                         try {
                             Thread.sleep(2000);
                         } catch (InterruptedException e) {
@@ -111,16 +111,17 @@ public class BallOpenGLActivity extends Activity implements View.OnClickListener
 
 
         //字在绘制完时会调用
-        mRenderer.setOnCompleteListener(new MyGLRenderer.OnCompleteListener() {
+        mRenderer.setOnCompleteListener(new MyGLES2Renderer.OnCompleteListener() {
 
             @Override
             public void onComplete() {
                 // TODO Auto-generated method stub
-                /**
+                    /*
                  * 画完了字
                  * 开始画下一个
                  * index画了第几个
                  */
+
                 if(str.length()>1&&index!=(str.length()-1))//不止一个字
                 {
                     index++;
@@ -138,6 +139,7 @@ public class BallOpenGLActivity extends Activity implements View.OnClickListener
 
             }
         });
+
 
     }
 
@@ -163,7 +165,7 @@ public class BallOpenGLActivity extends Activity implements View.OnClickListener
                         //没有输入汉字时  提示一下
                         if(tem.length()<1)
                         {
-                            Toast.makeText(BallOpenGLActivity.this, "没有输入任何汉字！", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(BallOpenGLES2Activity.this, "没有输入任何汉字！", Toast.LENGTH_SHORT).show();
                         }
                         else
                         {

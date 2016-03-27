@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.bonusball.opengl;
+package com.example.bonusball.opengl2;
 
-import android.opengl.GLES10;
+import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
-import android.util.Log;
+import android.opengl.Matrix;
 import android.view.MotionEvent;
-import android.view.View;
 
 import com.example.bonusball.ball.BallForCH;
 import com.example.bonusball.hzk.ScreenPoint;
+import com.example.bonusball.opengl.Circle;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -46,7 +46,7 @@ import javax.microedition.khronos.opengles.GL10;
  * <li>{@link GLSurfaceView.Renderer#onSurfaceChanged}</li>
  * </ul>
  */
-public class MyGLRenderer implements GLSurfaceView.Renderer {
+public class MyGLES2Renderer implements GLSurfaceView.Renderer {
 
     private static final String TAG = "MyGLRenderer";
     private float ratio = 0;
@@ -66,23 +66,29 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     private float openglFrustumHalfWidth;
     private float openglFrustumHalfHeight;
 
+    private final float[] mMVPMatrix = new float[16];
+    private final float[] mProjectionMatrix = new float[16];
+    private final float[] mViewMatrix = new float[16];
+//    private final float[] mRotationMatrix = new float[16];
+
+    CircleES2 circle;
 
     public void onDrawFrame(GL10 gl) {
 
         updatePositions();
 
-        GLES10.glPushMatrix();
 
-        GLES10.glClear(GLES10.GL_DEPTH_BUFFER_BIT | GLES10.GL_COLOR_BUFFER_BIT);
+        GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
         //设置眼球位置
-        GLU.gluLookAt(gl, 0, 0, 5, 0, 0, 0, 0, 1, 0);
+        Matrix.setLookAtM(mViewMatrix, 0, 0, 0, 5, 0, 0, 0, 0, 1, 0);
+//        GLU.gluLookAt(gl, 0, 0, 5, 0, 0, 0, 0, 1, 0);
 
+        //ModelViewProjection = Projextion x View
+        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
 
         for (BallForCH point : points) {
-            ((Circle) point).draw();
+            ((CircleES2) point).drawSelf(mMVPMatrix);
         }
-
-        GLES10.glPopMatrix();
 
     }
 
@@ -90,16 +96,13 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
 
         //设置视窗大小及位置
-        gl.glViewport(0, 0, width, height);
+        GLES20.glViewport(0, 0, width, height);
 
         //计算GLSurfaceView的宽高比
         ratio = (float) height / (float) width;
         // 调用此方法计算产生透视投影矩阵
-        gl.glMatrixMode(GLES10.GL_PROJECTION);
-        gl.glLoadIdentity();
-
         //设置平截头体
-        gl.glFrustumf(-1, 1, -ratio, ratio, 3, 7);
+        Matrix.frustumM(mProjectionMatrix, 0, -1, 1, -ratio, ratio, 3, 7);
 
 
         this.width = width;
@@ -112,25 +115,17 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         //设置屏幕背景色RGBA
-        gl.glClearColor(0, 0, 0, 1);
+        GLES20.glClearColor(0, 0, 0, 1);
 
         if(points.size() > 1) {
             // 切到后台回来，会执行这个操作
             return;
         }
 
-
         Random random = new Random();
 
-        for (int i = 0; i < 100; i++) {
-//            points.add(new Point(random.nextFloat(), random.nextFloat(), 2));
-//            points.add(new Circle(random.nextFloat(), random.nextFloat(), 2));
-
-//            float z = random.nextFloat() * 2 * (random.nextBoolean() ? 1 : -1);
-//            points.add(new Circle(random.nextFloat(), random.nextFloat(), z, 0.1f));
-
-//            float z = random.nextFloat() * 2 * (random.nextBoolean() ? 1 : -1);
-            points.add(new Circle(random.nextFloat(), random.nextFloat(), 2, random.nextFloat() * 0.1f));
+        for (int i = 0; i < 50; i++) {
+            points.add(new CircleES2(random.nextFloat(), random.nextFloat(), 2,  random.nextFloat() * 0.1f));
 
         }
 

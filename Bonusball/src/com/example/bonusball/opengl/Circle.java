@@ -2,6 +2,7 @@ package com.example.bonusball.opengl;
 
 import android.graphics.Color;
 import android.opengl.GLES10;
+import android.os.SystemClock;
 
 import com.example.bonusball.ball.BallForCH;
 import com.example.bonusball.color.RandomColor;
@@ -126,6 +127,12 @@ public class Circle extends BallForCH {
         GLES10.glPushMatrix();
         // 设置颜色
         GLES10.glColor4f(colors[0], colors[1], colors[2], colors[3]);
+
+
+//        long time = SystemClock.uptimeMillis() % 4000L;
+//        float angle = 0.090f * ((int) time);
+////        modelViewStack.translate(0.0f, 0.0f, -2.5f);
+//        GLES10.glRotatef(angle, 0, 0, 0.0f);
 
 
         //开启顶点缓冲区
