@@ -4,7 +4,6 @@
 <meta charset="gb2312">
 <title>WebGL</title>
 <script src="resources/webgl-utils.js"></script>
-<script src="lib/text-data.js"></script>
 <script>
 "use strict";
 
@@ -465,7 +464,7 @@ window.onload = main;
 		
 		ctx.fillStyle = '#000';
 		ctx.textBaseline = 'top';
-		ctx.font = "Courier New";
+		ctx.font = "1px Courier New";
 		ctx.fillText(text, 0, 0);
 
 		var imgData=ctx.getImageData(0,0,c.width,c.height);
@@ -522,7 +521,7 @@ void main() {
 </head>
 <body>
 <div>
-Set your desired text:<input id="myInput" width="100" height="20" type="text" value="Love">
+Set your desired text:<input id="myInput" width="100" height="20" type="text" value="֣">
 	<button type="button" onclick="start()">Start</button>
 	<canvas id="myCanvas" width="100" height="20" style="border:1px solid #d3d3d3 display:none;">
 	
