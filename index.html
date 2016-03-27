@@ -4,6 +4,24 @@
 <meta charset="gb2312">
 <title>WebGL</title>
 <script src="resources/webgl-utils.js"></script>
+
+<style>
+  	html, body
+  {
+   background: #000; 
+   margin: 0;
+   padding: 0;
+   overflow-x: hidden;
+   overflow-y: hidden;
+  }
+   canvas { font-family: 'MatrixCode'; }
+   div
+  {
+    font-family: 'MatrixCode';
+    color: #fff;
+   }
+</style>
+
 <script>
 "use strict";
 
@@ -27,7 +45,17 @@ window.onload = main;
 	var prevMouseY = 0;
 	
 	document.onmousemove  = mouseMove;
+	document.ontouchmove  = mouseMove;
+	document.ontouchstart  = touchStart;
 	
+	function touchStart(evt) {
+		//alert(evt.touches.length);
+		if(evt.touches.length == 2) {
+			start();
+		} else if(evt.touches.length > 2){
+			mouseClick(evt);
+		}
+	}
 	
 	function mouseClick(evt) {
 		for( var i =0;i<circles.length;i++) {
@@ -39,6 +67,10 @@ window.onload = main;
 	}
 	
 	function mouseMove(evt) {
+	
+		//浏览器的缩放、滚动条滚动等
+		evt.preventDefault();
+	
 		evt=evt||window.event;
 		var x=0,y=0;
 		 
@@ -418,10 +450,19 @@ window.onload = main;
 		
 		//alert(rect)
 		var len = result.length;
+		//var lastx,lastY;
 		for(var i = 0;i<len;i++) {
 			var x = result[i][0] * (width / (2 * textWidth)) + width / 4;
 			var y = result[i][1] * (height / (2 * textHeight)) + height / 4;
-			result[i] = [x,y];
+			//if(x - lastY == 1 && y == lastY) {
+				//do nothing
+			//} else {
+				result[i] = [x,y];
+			//	lastx = x;
+			//	lastY = u;
+			//}
+			
+			
 		}
 		//alert(result)
 		return result;		
@@ -462,10 +503,11 @@ window.onload = main;
 		var ctx=c.getContext("2d");
 		ctx.clearRect(0, 0, c.width,c.height);
 		
-		ctx.fillStyle = '#000';
+		ctx.fillStyle = '#fff';
 		ctx.textBaseline = 'top';
-		ctx.font = "1px Courier New";
+		//ctx.font=" 1pt Calibri";
 		ctx.fillText(text, 0, 0);
+		//Font.draw( ctx, text[ i ], i * fontSize * 0.9, fontSize, fontSize );  
 
 		var imgData=ctx.getImageData(0,0,c.width,c.height);
 		var result = [];
@@ -478,7 +520,7 @@ window.onload = main;
 			}
 		}
 		//计算完成之后清空
-		ctx.clearRect(0, 0, c.width,c.height);
+		//ctx.clearRect(0, 0, c.width,c.height);
 		//alert(result );
 
 	return result;
@@ -523,7 +565,7 @@ void main() {
 <div>
 Set your desired text:<input id="myInput" width="100" height="20" type="text" value="郑">
 	<button type="button" onclick="start()">Start</button>
-	<canvas id="myCanvas" width="100" height="20" style="border:1px solid #d3d3d3 display:none;">
+	<canvas id="myCanvas" width="100" height="12" style="border:1px solid #d3d3d3 display:none;">
 	
 </div>
 <div>
@@ -533,11 +575,11 @@ The Max Speed of Ball:<input id="speedInput" width="30" height="20" type="text" 
 	<button type="button" onclick="reset()">Reset</button>
 </div>
 <div>
-	<canvas id="canvas" width="800" height="600" style="border:1px #000000 solid;"  ondblclick="mouseClick()" ></canvas>
+	<canvas id="canvas" width="800" height="600" style="border:1px #ffffff solid;"  ondblclick="mouseClick()" ></canvas>
 </div>
 
 <div>
-	<canvas id="canvas_test" width="800" height="600" style="border:1px #000000 solid;"></canvas>
+	<canvas id="canvas_test" width="800" height="600" style="border:1px #ffffff solid;"></canvas>
 </div>
 </body>
 </html>
