@@ -1,0 +1,9 @@
+<!--index.wxml-->
+<view class="container">
+  
+  <canvas canvas-id='canvasid01'style="width: {{width}}; height: {{height}}; background-color:#ddd"  bindtap='onTap'></canvas>
+
+
+</view>
+
+ 

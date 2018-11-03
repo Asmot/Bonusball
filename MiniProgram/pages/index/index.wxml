@@ -1,0 +1,36 @@
+<!--index.wxml-->
+<view class="container">
+  <view class="userinfo">
+    <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 获取头像昵称 </button>
+    <block wx:else>
+      <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
+      <text class="userinfo-nickname">{{userInfo.nickName}}</text>
+    </block>
+  </view>
+  <view class="usermotto">
+    <text class="user-motto" bindtap='add'>{{motto}}</text>
+   
+  </view> 
+
+  <text class="user-motto">count:  {{counter}}</text>
+
+
+  <view wx:if="{{test_if == 'WEBVIEW'}}"> WEBVIEW </view>
+  <view wx:elif="{{test_if == 'APP'}}"> APP </view>
+  <view wx:else="{{test_if == 'MINA'}}"> MINA </view>
+
+
+  <canvas canvas-id='canvasid01'style="width: 300px; height: 200px;" ></canvas>
+
+  <map longitude='116' latitude='39' scale='2'></map>
+
+ 
+</view>
+
+ 
+
+
+  <view wx:for="{{array}}">{{item}}
+
+  
+  </view>
