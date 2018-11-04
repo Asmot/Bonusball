@@ -6,8 +6,8 @@ function MyShape() {
   var radius = 10;
   var maxSpeed = 10;
   var vx, vy;
-  var maxRadius = 3;
-  var minRadius = 2;
+  var maxRadius = 5;
+  var minRadius = 3;
 
   // 是否需要往目标位置移动,默认关闭
   var isTargetEable = false;
@@ -83,7 +83,7 @@ function MyShape() {
     var color0 = "#DEB887"
     var color1 = "#FAEBD7"
   
-    var rate = 80;
+    var rate = 100;
 
     var num = randomInt(100);
     if (num < rate) {

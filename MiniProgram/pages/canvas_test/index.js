@@ -63,9 +63,11 @@ function formText(points) {
     var targetY = points[i % points.length][1];
 
 
-    var offset = Math.floor(Math.random() * 4) - 2;
+    var offset_value = 14;
+    var offset_x = Math.floor(Math.random() * offset_value) - offset_value / 2;
+    var offset_y = Math.floor(Math.random() * offset_value) - offset_value / 2;
 
-    cir.setTargetPos(targetX + offset, targetY + offset);
+    cir.setTargetPos(targetX + offset_x, targetY + offset_y);
     cir.setTargetEable(true);
 
   }
