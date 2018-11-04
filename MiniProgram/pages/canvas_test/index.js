@@ -1,6 +1,7 @@
 //index.js
 
-
+var TextUtil = require('TextUtil.js');
+var shape = require('MyShape.js');
 
 //获取应用实例
 const app = getApp()
@@ -11,16 +12,18 @@ var mouseY = 0;
 var circles = [];
 
 
-
 Page({
   data: {
     width: 500,
     height: 300,
+    width_for_text: 100,
+    height_for_text: 20,
+    inputValue: '面',
     size: 100,
     counter: 1,
     userInfo: {},
     hasUserInfo: false,
-    DEBUG_LOG:true,
+    DEBUG_LOG:false,
     canIUse: wx.canIUse('button.open-type.getUserInfo')
   },
 
@@ -49,12 +52,6 @@ Page({
   /// 按钮触摸结束触发的事件
   onTouchEnd: function (e) {
     this.touchEndTime = e.timeStamp
-  }
-  ,
-  onTap: function (e) {
-    // 单击事件
-    mouseX = e.detail.x;
-    mouseY = e.detail.y;
   },
 
   /// 双击
@@ -81,7 +78,15 @@ Page({
           var vy = Math.floor(Math.random() * 2 * speed) - speed;
           cir.setVXY(vx, vy)
         }
+      } else {
+        // 单击事件
+        mouseX = e.detail.x;
+        mouseY = e.detail.y;
       }
+    } else {
+      // 单击事件
+      mouseX = e.detail.x;
+      mouseY = e.detail.y;
     }
   },
 
@@ -92,6 +97,54 @@ Page({
   },
   ///////////////////////////
 
+  // 按钮点击事件
+  onButtonClick: function(e) {
+    //
+   
+    var text = this.data.inputValue;
+    TextUtil.text2Matrix(text, this.data.width_for_text, this.data.height_for_text, this.data.width, this.data.height, wx, callback);
+
+    
+    function callback(points) {
+      formText(points);
+      setTimeout(stopFormText, 5000);
+    }
+
+
+    // 停止生成汉字
+    function stopFormText() {
+      for (var i = 0; i < circles.length; i++) {
+        var cir = circles[i];
+        cir.setTargetEable(false);
+      }
+    }
+
+    //开始成汉字
+    function formText(points) {
+      // console.log(points)
+      for (var i = 0; i < circles.length; i++) {
+        var cir = circles[i];
+
+        var targetX = points[i % points.length][0];
+        var targetY = points[i % points.length][1];
+
+        cir.setTargetPos(targetX, targetY);
+        cir.setTargetEable(true);
+
+      }
+    }
+  },
+
+
+  ////
+  onTextChanged: function(input) {
+    console.log(input.detail.value);
+    this.setData({
+      inputValue : input.detail.value
+    });
+  },
+
+  ///
 
 
   onReady: function(e) {
@@ -113,7 +166,7 @@ Page({
     })
 
 
-    var DEBUG_LOG = false;
+    var DEBUG_LOG = this.data.DEBUG_LOG;
 
 
     var index_counter = 0;
@@ -130,7 +183,7 @@ Page({
     console.log(width + " " + height+ " " + size)
 
     for(var i =0; i < size;i++) {
-      var cir = new MyShape();
+      var cir = new shape.MyShape();
       cir.randomInit(width, height)
       circles.push(cir)
     }
@@ -152,12 +205,15 @@ Page({
         var stirDist = width * 0.125;
         var blowDist = width * 0.5;
 
-
-        if (DEBUG_LOG)
-          console.log("circle prepare pos " + cir.getX() + " " + cir.getY() + " " + cir.getVX() + " " + cir.getVY())
-
         var dX = cir.getX() - mouseX;
         var dY = cir.getY() - mouseY;
+
+        // 判断是否往目标位置移动，默认所有的点会往手势点击位置移动
+        if (cir.getTargetEable()) {
+          dX = cir.getX() - cir.getTargetX();
+          dY = cir.getY() - cir.getTargetY();
+        }
+
 
         var d = Math.sqrt(dX * dX + dY * dY);
         dX = d > 0 ? dX / d : 0;
@@ -178,8 +234,7 @@ Page({
         // cir.vy *= 0.96;
 
         cir.setVXY(cir.getVX() * 0.96, cir.getVY() * 0.96)
-        if (DEBUG_LOG)
-          console.log("circle after pos " + cir.getX() + " " + cir.getY() + " " + cir.getVX() + " " + cir.getVY() + " " + cir.getVX() * 0.96)
+        
         //速度修复，太慢了需要处理一下
         var avgVX = Math.abs(cir.getVX());
         var avgVY = Math.abs(cir.getVY());
@@ -187,19 +242,14 @@ Page({
 
         
         if (avgVX < 0.001) {
-          // cir.vx *= Math.random(); // / Integer.MAX_VALUE * 3;//float(mRandom.nextInt()) / Integer.MAX_VALUE * 3;
           cir.setVXY(cir.getVX() * Math.random(), cir.getVY());
-
         }
         if (avgVY < 0.001) {
-          // cir.vx *= Math.random(); // / Integer.MAX_VALUE * 3;
           cir.setVXY(cir.getVX(), cir.getVY() * Math.random());
         }
 
 
         //移动
-        // cir.x += cir.vx;
-        // cir.getY() += cir.vy;
         cir.setPos(cir.getX() + cir.getVX(), cir.getY() + cir.getVY())
 
         if (DEBUG_LOG)
@@ -209,21 +259,16 @@ Page({
         if (cir.getX() > width - cir.getRadius()) {
           cir.setPos(width - cir.getRadius(), cir.getY());
           cir.setVXY(cir.getVX() * -1, cir.getVY());
-          // cir.vx *= -1;
+
         } else if (cir.getX() < cir.getRadius()) {
-          // cir.getX() = cir.getRadius();
-          // cir.vx *= -1;
+          
           cir.setPos(cir.getRadius(), cir.getY());
           cir.setVXY(cir.getVX() * -1, cir.getVY());
         }
         if (cir.getY() > height - cir.getRadius()) {
-          // cir.getY() = height - cir.getRadius();
-          // cir.vy *= -1;
           cir.setPos(cir.getX(), height - cir.getRadius());
           cir.setVXY(cir.getVX(), cir.getVY() * -1);
         } else if (cir.getY() < cir.getRadius()) {
-          // cir.getY() = cir.getRadius();
-          // cir.vy *= -1;
           cir.setPos(cir.getX(), cir.getRadius());
           cir.setVXY(cir.getVX(), cir.getVY() * -1);
         }
@@ -245,7 +290,6 @@ Page({
 
   },
   drawCirlce1: function() {
-    console.log("drawCircle1 call")
 
     // 使用 wx.createContext 获取绘图上下文 context
     var context = wx.createCanvasContext('canvasid01')
@@ -271,94 +315,3 @@ Page({
     console.log('ok')
   }
 })
-
-
-function MyShape() {
-  var x = 100;
-  var y = 100;
-  var color = "#00ff00";
-  var r, g, b;
-  var radius = 10;
-  var maxSpeed = 10;
-  var vx, vy;
-  var maxRadius = 15;
-
-  this.getX = function () {
-    return x;
-  }
-  this.getY = function () {
-    return y;
-  }
-
-  this.setPos = function (x_, y_) {
-    x = x_;
-    y = y_;
-  }
-
-  this.getVX = function () {
-    return vx;
-  }
-  this.getVY = function () {
-    return vy;
-  }
-
-  this.setVXY = function (vx_, vy_) {
-    vx = vx_;
-    vy = vy_;
-  }
-
-  this.getRadius = function () {
-    return radius;
-  }
-
-
-
-  this.randomInit = function (c_width, c_height) {
-    //出初始
-    radius = randomInt(maxRadius - 2) + 2;
-    x = randomInt(radius + c_width - 100);
-    y = randomInt(radius + c_height - 100);
-
-    // 初始位置
-    r = Math.random();
-    g = Math.random();
-    b = Math.random();
-    color = randomHexColor();
-
-    //vx = randomInt(2 * maxSpeed) - maxSpeed;
-    //vy = randomInt(2 * maxSpeed) - maxSpeed;
-    vx = Math.random() * 2 * maxSpeed - maxSpeed;
-    vy = Math.random() * 2 * maxSpeed - maxSpeed;
-  }
-
-
-  function randomHexColor() { //随机生成十六进制颜色
-    var hex = Math.floor(Math.random() * 16777216).toString(16); //生成ffffff以内16进制数
-    while (hex.length < 6) { //while循环判断hex位数，少于6位前面加0凑够6位
-      hex = '0' + hex;
-    }
-    return '#' + hex; //返回‘#'开头16进制颜色
-  }
-
-  // Returns a random integer from 0 to range - 1.
-  function randomInt(range) {
-    return Math.floor(Math.random() * range);
-  }
-
-  this.drawMyShape = function (context) {
-
-    // console.log("drawMyShape call " + x + " " + y + " " + radius)
-
-    context.setFillStyle(color)
-    // context.beginPath();
-    // context.arc(x, y, radius, 0, 2 * Math.PI, true)
-    // context.closePath()
-    // context.fill()
-
-    context.setStrokeStyle(color)
-    context.beginPath();
-    context.arc(x, y, radius, 0, 2 * Math.PI, true)
-    context.closePath()
-    context.stroke()
-  }
-}
