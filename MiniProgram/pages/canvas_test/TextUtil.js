@@ -2,16 +2,20 @@ function text2Matrix(text, width_for_text, height_for_text, width_map, height_ma
   console.log(text)
   var canvasId = "canvas_for_text"
   // 使用 wx.createContext 获取绘图上下文 context
+
   var ctx = wx.createCanvasContext(canvasId)
 
   var width = width_for_text;
   var height = height_for_text;
+  var readyToShowText = text;
 
   ctx.fillStyle = '#fff';
+  // ctx.setFontSize(14);
+  ctx.font = "14px SimSun";
   ctx.textBaseline = 'top';
   ctx.clearRect(0, 0, width, height);
-  ctx.fillText(text, 0, 0);
-  ctx.draw()  
+  ctx.fillText(readyToShowText, 0, 0);
+  ctx.draw()
 
   wx.canvasGetImageData({
     canvasId: canvasId,
@@ -37,30 +41,20 @@ function text2Matrix(text, width_for_text, height_for_text, width_map, height_ma
         }
       }
 
-      // for (var i = 1; i <= height; i++) {
-      //   for (var j = 1; j <= width; j++) {
-      //     var pos = ((i - 1) * width + (j)) * 4 - 1;
-      //     if (imgData[pos] > 0) {
-      //       result.push([i,j])
-      //     }
-      //   }
-      // }
-
-      console.log("result lenght " + result.length);
 
       // 转换为 适配屏幕的点
       result = map2center(result, width_map, height_map);
 
-      // console.log(result.length);
-      // console.log(result);
-
       callback(result);
+
     }
   })
 
   //计算完成之后清空
   // ctx.clearRect(0, 0, width, height);
-  
+
+
+
 }
 
 
@@ -72,17 +66,18 @@ function map2center(result, width, height) {
   var rect = getTextRect(result);
   var textLeft = rect[0];
   var textTop = rect[1];
-  var textWidth = rect[2];// - rect[0] + 1;
-  var textHeight = rect[3];// - rect[1] + 1;
+  var textWidth = rect[2]; // - rect[0] + 1;
+  var textHeight = rect[3]; // - rect[1] + 1;
 
-  //alert(rect)
   var len = result.length;
+
+  var result_tmp = [];
+
   for (var i = 0; i < len; i++) {
     var x = result[i][0] * (width / (2 * textWidth)) + width / 4;
     var y = result[i][1] * (height / (2 * textHeight)) + height / 4;
     result[i] = [x, y];
   }
-  //alert(result)
   return result;
 }
 

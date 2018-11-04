@@ -11,11 +11,37 @@ var mouseY = 0;
 
 var circles = [];
 
+/**
+ * 记录生成字是否正在运行
+ */
+var isFormTextRunning = false;
+
+
+function startShowText(text, width_for_text, height_for_text, width_map, height_map, wx) {
+  // text.split()
+
+  if (!isFormTextRunning) {
+    // 添加判断避免重复处理
+    isFormTextRunning = true;
+    console.log("ready to show " + text);
+    var readyToShowText = text;
+    TextUtil.text2Matrix(readyToShowText, width_for_text, height_for_text, width_map, height_map, wx, TextGeneragetCallback);
+  } else {
+    console.log("FormText is running ");
+  }
+}
+
 
 /**
  * 生成文字的回调
  */
 function TextGeneragetCallback(points) {
+
+  formText(points);
+  setTimeout(stopFormText, 5000);
+}
+
+function startFormatText(points) {
   formText(points);
   setTimeout(stopFormText, 5000);
 }
@@ -26,6 +52,10 @@ function stopFormText() {
     var cir = circles[i];
     cir.setTargetEable(false);
   }
+
+  // 完成汉字展示
+  isFormTextRunning = false;
+
 }
 
 //开始成汉字
@@ -38,7 +68,7 @@ function formText(points) {
     var targetY = points[i % points.length][1];
 
 
-    var offset = Math.floor(Math.random() *4) - 2;  
+    var offset = Math.floor(Math.random() * 4) - 2;
 
     cir.setTargetPos(targetX + offset, targetY + offset);
     cir.setTargetEable(true);
@@ -53,12 +83,12 @@ Page({
     height: 300,
     width_for_text: 100,
     height_for_text: 20,
-    inputValue: '面',
+    inputValue: '梁艳',
     size: 500,
     counter: 1,
     userInfo: {},
     hasUserInfo: false,
-    DEBUG_LOG:false,
+    DEBUG_LOG: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo')
   },
 
@@ -75,22 +105,22 @@ Page({
   // 最后一次单击事件点击发生时间
   lastTapTime: 0,
   // 单击事件点击后要触发的函数
-  lastTapTimeoutFunc: null, 
+  lastTapTimeoutFunc: null,
 
 
 
   /// 按钮触摸开始触发的事件
-  onTouchStart: function (e) {
+  onTouchStart: function(e) {
     this.touchStartTime = e.timeStamp
   },
 
   /// 按钮触摸结束触发的事件
-  onTouchEnd: function (e) {
+  onTouchEnd: function(e) {
     this.touchEndTime = e.timeStamp
   },
 
   /// 双击
-  onDoubleTap: function (e) {
+  onDoubleTap: function(e) {
     var that = this
     // 控制点击事件在350ms内触发，加这层判断是为了防止长按时会触发点击事件
     if (that.touchEndTime - that.touchStartTime < 350) {
@@ -104,7 +134,7 @@ Page({
       if (currentTime - lastTapTime < 300) {
         // 成功触发双击事件时，取消单击事件的执行
         clearTimeout(that.lastTapTimeoutFunc);
-        
+
         // 双击事件，打乱位置
         for (var i = 0; i < circles.length; i++) {
           var cir = circles[i];
@@ -131,17 +161,18 @@ Page({
     mouseY = e.touches[0].y;
   },
 
-  onLongTap:function(e) {
+  onLongTap: function(e) {
     var text = this.data.inputValue;
-    TextUtil.text2Matrix(text, this.data.width_for_text, this.data.height_for_text, this.data.width, this.data.height, wx, TextGeneragetCallback);    
+    startShowText(text, this.data.width_for_text, this.data.height_for_text, this.data.width, this.data.height, wx);
   },
   ///////////////////////////
 
   // 按钮点击事件
   onButtonClick: function(e) {
     //
-    var text = this.data.inputValue;
-    TextUtil.text2Matrix(text, this.data.width_for_text, this.data.height_for_text, this.data.width, this.data.height, wx, TextGeneragetCallback);    
+    // var text = this.data.inputValue;
+    // TextUtil.text2Matrix(text, this.data.width_for_text, this.data.height_for_text, this.data.width, this.data.height, wx, TextGeneragetCallback);    
+    this.onLongTap()
   },
 
 
@@ -149,7 +180,7 @@ Page({
   onTextChanged: function(input) {
     console.log(input.detail.value);
     this.setData({
-      inputValue : input.detail.value
+      inputValue: input.detail.value
     });
   },
 
@@ -189,14 +220,14 @@ Page({
     mouseX = width / 2;
     mouseY = height / 2;
 
-    console.log(width + " " + height+ " " + size)
+    console.log(width + " " + height + " " + size)
 
-    for(var i =0; i < size;i++) {
+    for (var i = 0; i < size; i++) {
       var cir = new shape.MyShape();
       cir.randomInit(width, height)
       circles.push(cir)
     }
-   
+
     var onDraw = function() {
       // 使用 wx.createContext 获取绘图上下文 context
       var context = wx.createCanvasContext('canvasid01')
@@ -232,7 +263,7 @@ Page({
         //离触摸点越远速度越小
         if (d < toDist) {
           var toAcc = (1 - (d / toDist)) * width * 0.0014;
-          var vx =  cir.getVX() - dX * toAcc;
+          var vx = cir.getVX() - dX * toAcc;
           var vy = cir.getVY() - dY * toAcc;
 
           cir.setVXY(vx, vy)
@@ -243,13 +274,13 @@ Page({
         // cir.vy *= 0.96;
 
         cir.setVXY(cir.getVX() * 0.96, cir.getVY() * 0.96)
-        
+
         //速度修复，太慢了需要处理一下
         var avgVX = Math.abs(cir.getVX());
         var avgVY = Math.abs(cir.getVY());
         var avgV = (avgVX + avgVY) * 0.5;
 
-        
+
         if (avgVX < 0.001) {
           cir.setVXY(cir.getVX() * Math.random(), cir.getVY());
         }
@@ -270,7 +301,7 @@ Page({
           cir.setVXY(cir.getVX() * -1, cir.getVY());
 
         } else if (cir.getX() < cir.getRadius()) {
-          
+
           cir.setPos(cir.getRadius(), cir.getY());
           cir.setVXY(cir.getVX() * -1, cir.getVY());
         }
@@ -289,7 +320,7 @@ Page({
       }
       context.draw()
 
-    
+
 
     }
 
