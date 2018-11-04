@@ -41,11 +41,6 @@ function TextGeneragetCallback(points) {
   setTimeout(stopFormText, 5000);
 }
 
-function startFormatText(points) {
-  formText(points);
-  setTimeout(stopFormText, 5000);
-}
-
 // 停止生成汉字
 function stopFormText() {
   for (var i = 0; i < circles.length; i++) {
@@ -83,7 +78,7 @@ Page({
     height: 300,
     width_for_text: 100,
     height_for_text: 20,
-    inputValue: '梁艳',
+    inputValue: '面',
     size: 500,
     counter: 1,
     userInfo: {},
