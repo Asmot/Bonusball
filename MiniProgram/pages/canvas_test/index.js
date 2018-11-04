@@ -12,6 +12,38 @@ var mouseY = 0;
 var circles = [];
 
 
+/**
+ * 生成文字的回调
+ */
+function TextGeneragetCallback(points) {
+  formText(points);
+  setTimeout(stopFormText, 5000);
+}
+
+// 停止生成汉字
+function stopFormText() {
+  for (var i = 0; i < circles.length; i++) {
+    var cir = circles[i];
+    cir.setTargetEable(false);
+  }
+}
+
+//开始成汉字
+function formText(points) {
+  // console.log(points)
+  for (var i = 0; i < circles.length; i++) {
+    var cir = circles[i];
+
+    var targetX = points[i % points.length][0];
+    var targetY = points[i % points.length][1];
+
+    cir.setTargetPos(targetX, targetY);
+    cir.setTargetEable(true);
+
+  }
+}
+
+
 Page({
   data: {
     width: 500,
@@ -95,44 +127,18 @@ Page({
     mouseX = e.touches[0].x;
     mouseY = e.touches[0].y;
   },
+
+  onLongTap:function(e) {
+    var text = this.data.inputValue;
+    TextUtil.text2Matrix(text, this.data.width_for_text, this.data.height_for_text, this.data.width, this.data.height, wx, TextGeneragetCallback);    
+  },
   ///////////////////////////
 
   // 按钮点击事件
   onButtonClick: function(e) {
     //
-   
     var text = this.data.inputValue;
-    TextUtil.text2Matrix(text, this.data.width_for_text, this.data.height_for_text, this.data.width, this.data.height, wx, callback);
-
-    
-    function callback(points) {
-      formText(points);
-      setTimeout(stopFormText, 5000);
-    }
-
-
-    // 停止生成汉字
-    function stopFormText() {
-      for (var i = 0; i < circles.length; i++) {
-        var cir = circles[i];
-        cir.setTargetEable(false);
-      }
-    }
-
-    //开始成汉字
-    function formText(points) {
-      // console.log(points)
-      for (var i = 0; i < circles.length; i++) {
-        var cir = circles[i];
-
-        var targetX = points[i % points.length][0];
-        var targetY = points[i % points.length][1];
-
-        cir.setTargetPos(targetX, targetY);
-        cir.setTargetEable(true);
-
-      }
-    }
+    TextUtil.text2Matrix(text, this.data.width_for_text, this.data.height_for_text, this.data.width, this.data.height, wx, TextGeneragetCallback);    
   },
 
 
