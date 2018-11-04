@@ -37,7 +37,10 @@ function formText(points) {
     var targetX = points[i % points.length][0];
     var targetY = points[i % points.length][1];
 
-    cir.setTargetPos(targetX, targetY);
+
+    var offset = Math.floor(Math.random() *4) - 2;  
+
+    cir.setTargetPos(targetX + offset, targetY + offset);
     cir.setTargetEable(true);
 
   }
@@ -51,7 +54,7 @@ Page({
     width_for_text: 100,
     height_for_text: 20,
     inputValue: '面',
-    size: 100,
+    size: 500,
     counter: 1,
     userInfo: {},
     hasUserInfo: false,

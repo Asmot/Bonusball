@@ -37,6 +37,15 @@ function text2Matrix(text, width_for_text, height_for_text, width_map, height_ma
         }
       }
 
+      // for (var i = 1; i <= height; i++) {
+      //   for (var j = 1; j <= width; j++) {
+      //     var pos = ((i - 1) * width + (j)) * 4 - 1;
+      //     if (imgData[pos] > 0) {
+      //       result.push([i,j])
+      //     }
+      //   }
+      // }
+
       console.log("result lenght " + result.length);
 
       // 转换为 适配屏幕的点

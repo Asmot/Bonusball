@@ -6,7 +6,8 @@ function MyShape() {
   var radius = 10;
   var maxSpeed = 10;
   var vx, vy;
-  var maxRadius = 15;
+  var maxRadius = 3;
+  var minRadius = 2;
 
   // 是否需要往目标位置移动,默认关闭
   var isTargetEable = false;
@@ -66,14 +67,32 @@ function MyShape() {
 
   this.randomInit = function (c_width, c_height) {
     //出初始
-    radius = randomInt(maxRadius - 2) + 2;
+    radius = minRadius + randomInt(maxRadius - minRadius);
     x = randomInt(radius + c_width - 100);
     y = randomInt(radius + c_height - 100);
 
-    color = randomHexColor();
+    color = randomHexColor2();
+    
 
     vx = Math.random() * 2 * maxSpeed - maxSpeed;
     vy = Math.random() * 2 * maxSpeed - maxSpeed;
+  }
+
+
+  function randomHexColor2() { 
+    var color0 = "#DEB887"
+    var color1 = "#FAEBD7"
+  
+    var rate = 80;
+
+    var num = randomInt(100);
+    if (num < rate) {
+      return color0;
+    } else {
+      return color1;    
+    }
+  
+    
   }
 
 

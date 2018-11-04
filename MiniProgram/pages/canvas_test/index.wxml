@@ -1,7 +1,7 @@
 <!--index.wxml-->
 <!-- <view class="container"> -->
 
-<canvas canvas-id='canvasid01' style="width: {{width}}px; height: {{height}}px; background-color:#ddd" bindtouchmove='onTouchMove' bindtap='onDoubleTap' bindtouchstart='onTouchStart' bindtouchend='onTouchEnd' bindlongtap='onLongTap'  disable-scroll='false'></canvas>
+<canvas canvas-id='canvasid01' style="width: {{width}}px; height: {{height}}px; background-color:#fff" bindtouchmove='onTouchMove' bindtap='onDoubleTap' bindtouchstart='onTouchStart' bindtouchend='onTouchEnd' bindlongtap='onLongTap'  disable-scroll='false'></canvas>
 <view>
   <canvas canvas-id="canvas_for_text" style=" width :{{width_for_text}}px; height:{{height_for_text}}px; background-color:#d3d3d3 ;"></canvas>
   <input value="{{inputValue}}" bindinput='onTextChanged'>Test</input>
