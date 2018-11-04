@@ -8,6 +8,10 @@ const app = getApp()
 var mouseX = 0;
 var mouseY = 0;
 
+var circles = [];
+
+
+
 Page({
   data: {
     width: 500,
@@ -16,19 +20,52 @@ Page({
     counter: 1,
     userInfo: {},
     hasUserInfo: false,
+    DEBUG_LOG:true,
     canIUse: wx.canIUse('button.open-type.getUserInfo')
   },
 
   onLoad: function() {
 
   },
+  onTouchMove: function(e) {
+    // 按住移动
+    mouseX = e.touches[0].x;
+    mouseY = e.touches[0].y;
+  },
   onTap: function(e) {
-    
-    console.log(e.detail.x + " " + e.detail.y)
+    // 单击事件
     mouseX = e.detail.x;
     mouseY = e.detail.y;
   },
+  onLongTap: function(e) {
+    // 长按事件，打乱位置
+    for (var i = 0; i < circles.length; i++) {
+      var cir = circles[i];
+      var speed = 50;
+      var vx = Math.floor(Math.random() * 2 * speed) - speed;
+      var vy = Math.floor(Math.random() * 2 * speed) - speed;
+      cir.setVXY(vx, vy)
+    }
+
+  },
   onReady: function(e) {
+
+    var myWidth = this.data.width;
+    var myHeight = this.data.height;
+
+    wx.getSystemInfo({
+      success: function(res) {
+        console.log(res)
+        myWidth = res.windowWidth;
+        myHeight = res.windowHeight;
+      },
+    });
+
+    this.setData({
+      width: myWidth,
+      height: myHeight
+    })
+
 
     var DEBUG_LOG = false;
 
@@ -36,7 +73,6 @@ Page({
     var index_counter = 0;
 
     //全局变量，存放所有的点
-    var circles = [];
     var width = this.data.width;
     var height = this.data.height;
     var size = this.data.size;
