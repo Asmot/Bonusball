@@ -27,27 +27,73 @@ Page({
   onLoad: function() {
 
   },
+
+  // 手势相关
+
+  // 触摸开始时间
+  touchStartTime: 0,
+  // 触摸结束时间
+  touchEndTime: 0,
+  // 最后一次单击事件点击发生时间
+  lastTapTime: 0,
+  // 单击事件点击后要触发的函数
+  lastTapTimeoutFunc: null, 
+
+
+
+  /// 按钮触摸开始触发的事件
+  onTouchStart: function (e) {
+    this.touchStartTime = e.timeStamp
+  },
+
+  /// 按钮触摸结束触发的事件
+  onTouchEnd: function (e) {
+    this.touchEndTime = e.timeStamp
+  }
+  ,
+  onTap: function (e) {
+    // 单击事件
+    mouseX = e.detail.x;
+    mouseY = e.detail.y;
+  },
+
+  /// 双击
+  onDoubleTap: function (e) {
+    var that = this
+    // 控制点击事件在350ms内触发，加这层判断是为了防止长按时会触发点击事件
+    if (that.touchEndTime - that.touchStartTime < 350) {
+      // 当前点击的时间
+      var currentTime = e.timeStamp
+      var lastTapTime = that.lastTapTime
+      // 更新最后一次点击时间
+      that.lastTapTime = currentTime
+
+      // 如果两次点击时间在300毫秒内，则认为是双击事件
+      if (currentTime - lastTapTime < 300) {
+        // 成功触发双击事件时，取消单击事件的执行
+        clearTimeout(that.lastTapTimeoutFunc);
+        
+        // 双击事件，打乱位置
+        for (var i = 0; i < circles.length; i++) {
+          var cir = circles[i];
+          var speed = 50;
+          var vx = Math.floor(Math.random() * 2 * speed) - speed;
+          var vy = Math.floor(Math.random() * 2 * speed) - speed;
+          cir.setVXY(vx, vy)
+        }
+      }
+    }
+  },
+
   onTouchMove: function(e) {
     // 按住移动
     mouseX = e.touches[0].x;
     mouseY = e.touches[0].y;
   },
-  onTap: function(e) {
-    // 单击事件
-    mouseX = e.detail.x;
-    mouseY = e.detail.y;
-  },
-  onLongTap: function(e) {
-    // 长按事件，打乱位置
-    for (var i = 0; i < circles.length; i++) {
-      var cir = circles[i];
-      var speed = 50;
-      var vx = Math.floor(Math.random() * 2 * speed) - speed;
-      var vy = Math.floor(Math.random() * 2 * speed) - speed;
-      cir.setVXY(vx, vy)
-    }
+  ///////////////////////////
 
-  },
+
+
   onReady: function(e) {
 
     var myWidth = this.data.width;

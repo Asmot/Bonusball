@@ -1,7 +1,7 @@
 <!--index.wxml-->
 <!-- <view class="container"> -->
   
-  <canvas canvas-id='canvasid01'style="width: {{width}}px; height: {{height}}px; background-color:#ddd"  bindtouchmove='onTouchMove' bindtap='onTap' bindlongtap='onLongTap'></canvas>
+  <canvas canvas-id='canvasid01'style="width: {{width}}px; height: {{height}}px; background-color:#ddd"  bindtouchmove='onTouchMove' bindtap='onDoubleTap' bindtouchstart='onTouchStart' bindtouchend='onTouchEnd'  disable-scroll='false'></canvas>
 
 
 <!-- </view> -->
