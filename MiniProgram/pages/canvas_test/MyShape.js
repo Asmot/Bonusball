@@ -6,8 +6,8 @@ function MyShape() {
   var radius = 10;
   var maxSpeed = 10;
   var vx, vy;
-  var maxRadius = 5;
-  var minRadius = 3;
+  var maxRadius = 4;
+  var minRadius = 2;
 
   // 是否需要往目标位置移动,默认关闭
   var isTargetEable = false;
