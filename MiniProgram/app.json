@@ -10,5 +10,6 @@
     "navigationBarTitleText": "BonusBall",
     "navigationBarTextStyle":"black"
   },
-  "debug": true
+  "debug": false
+
 }
