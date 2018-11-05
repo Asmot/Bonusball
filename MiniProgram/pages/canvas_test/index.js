@@ -16,6 +16,8 @@ var circles = [];
  */
 var isFormTextRunning = false;
 
+var lifeTimer;
+
 
 function startShowText(text, width_for_text, height_for_text, width_map, height_map, wx) {
   // text.split()
@@ -81,7 +83,7 @@ Page({
     width_for_text: 100,
     height_for_text: 20,
     inputValue: '面',
-    size: 500,
+    size: 300,
     counter: 1,
     userInfo: {},
     hasUserInfo: false,
@@ -182,9 +184,11 @@ Page({
   },
 
   ///
+  onReady:function(e) {
 
+  },
 
-  onReady: function(e) {
+  onShow: function(e) {
 
     var myWidth = this.data.width;
     var myHeight = this.data.height;
@@ -321,11 +325,16 @@ Page({
 
     }
 
-    setInterval(onDraw, 16)
+    lifeTimer = setInterval(onDraw, 16)
 
 
 
   },
+  onHide: function() {
+    circles = [];
+    clearInterval(lifeTimer)
+  },
+
   drawCirlce1: function() {
 
     // 使用 wx.createContext 获取绘图上下文 context
