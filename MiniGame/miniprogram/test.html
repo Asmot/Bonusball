@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Camera 相机</title>
+	<style>
+		#canvas {
+			width: 100%;
+			height: 100%;
+			border: 1px solid red;
+			margin: 50px auto;
+			display: block;
+		}
+	</style>
+</head>
+
+<body>
+	<canvas id="canvas"></canvas>
+	<script src="./js/libs/three.min.js"></script>
+
+	<script>
+		var camera, scene, renderer, canvas;
+     init();
+     function init () {
+        console.log("testest");
+         canvas = document.getElementById('canvas');
+
+         var width = 500;
+         var height = 500;
+         
+         scene = new THREE.Scene();
+
+         var isOrth = false;
+         
+         if(isOrth) {
+      //orthographi
+            camera = new THREE.OrthographicCamera(-width, width, height, -height, 1, 10);
+            var geometry = new THREE.CubeGeometry(2*width , 2*height , 1);
+            camera.position.set(0, 0, 5);
+            camera.lookAt(new THREE.Vector3(0, 0, 0)); 
+         } else {
+             //perspective
+            camera = new THREE.PerspectiveCamera(90, width/height, 1, 100);
+            console.log(width,height)
+            var geometry = new THREE.CubeGeometry(10 , 10 , 10);
+            camera.position.set(0, 0, 5*5);
+            camera.lookAt(new THREE.Vector3(0, 10, 2)); 
+         }
+    
+
+
+       
+
+        scene.add(camera);
+
+        
+
+         var material = new THREE.MeshBasicMaterial({
+         color: 0xffff00,
+          wireframe: true
+         });
+         // cube 是一个可以填充的形状
+         var cube = new THREE.Mesh(geometry, material);
+
+        cube.position.x = 0;
+        cube.position.y = 0;
+        cube.position.z = 0;
+
+         scene.add(cube);
+
+         renderer = new THREE.WebGLRenderer({
+             // 将canvas交给renderer 一个渲染的容器
+             canvas: canvas,
+             // 平滑， 抗锯齿 输出的画面会进行优化，不会带毛边
+             antialias: true
+         });
+         // 设置renderer的样子
+         renderer.setSize(width , height );
+         renderer.render(scene, camera);
+     }
+
+	</script>
+
+
+
+</body>
+
+</html>
